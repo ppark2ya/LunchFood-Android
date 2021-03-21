@@ -5,6 +5,8 @@
     <!-- 인터넷 사용 권한 설정-->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -15,23 +17,22 @@
         android:theme="@style/Theme.LunchFood"
         android:usesCleartextTraffic="true"
         android:name=".GlobalApplication">
-        <activity android:name=".MainActivity">
+
+        <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key"/>
+
+        <activity android:name=".KakaoLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".KakaoLoginActivity">
-        </activity>
+        <activity android:name=".AddressMapping" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <!-- Redirect URI: "kakao{NATIVE_APP_KEY}://oauth“ -->
-                <data android:host="oauth"
-                    android:scheme="b058d9748a1171f70f2f7885881ff6f5" />
+                <data android:host="oauth" android:scheme="@string/kakao_app_key" />
             </intent-filter>
         </activity>
     </application>

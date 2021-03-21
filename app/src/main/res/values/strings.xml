@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">LunchFood</string>
+    <string name="app_name">점심줄 놓지마</string>
     <string name="kakao_app_key">b058d9748a1171f70f2f7885881ff6f5</string>
+    <string name="signup_comment">&lt;u>&lt;b>회원가입&lt;b>&lt;/u></string>
+    <string name="address_placeholder">동명(읍, 면)으로 검색(ex. 신림동)</string>
+    <string name="gps_search_btn_text">내 위치로 검색하기</string>
 </resources>
