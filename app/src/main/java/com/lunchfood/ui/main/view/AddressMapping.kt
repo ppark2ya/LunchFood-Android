@@ -1,7 +1,8 @@
-package com.lunchfood
+package com.lunchfood.ui.main.view
 
 import android.os.Bundle
-import com.lunchfood.common.BaseActivity
+import com.lunchfood.R
+import com.lunchfood.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.header.*
 
 class AddressMapping : BaseActivity(TransitionMode.HORIZON) {

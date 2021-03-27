@@ -16,17 +16,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LunchFood"
         android:usesCleartextTraffic="true"
-        android:name=".GlobalApplication">
+        android:name=".ui.base.GlobalApplication">
 
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key"/>
 
-        <activity android:name=".KakaoLoginActivity">
+        <activity android:name=".ui.main.view.KakaoLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddressMapping" />
+        <activity android:name=".ui.main.view.AddressMapping" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

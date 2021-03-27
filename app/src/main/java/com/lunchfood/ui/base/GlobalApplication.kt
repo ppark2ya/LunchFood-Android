@@ -1,8 +1,9 @@
-package com.lunchfood
+package com.lunchfood.ui.base
 
 import android.app.Activity
 import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
+import com.lunchfood.R
 
 class GlobalApplication: Application() {
     companion object {
@@ -14,7 +15,7 @@ class GlobalApplication: Application() {
         }
 
         fun setCurrentActivity(currentActivity: Activity) {
-            GlobalApplication.currentActivity = currentActivity
+            Companion.currentActivity = currentActivity
         }
 
         fun getGlobalApplicationContext(): GlobalApplication? {

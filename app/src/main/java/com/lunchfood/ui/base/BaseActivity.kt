@@ -1,4 +1,4 @@
-package com.lunchfood.common
+package com.lunchfood.ui.base
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity

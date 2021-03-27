@@ -1,4 +1,4 @@
-package com.lunchfood.common
+package com.lunchfood.utils
 
 class Constants {
     companion object {

@@ -1,4 +1,4 @@
-package com.lunchfood.common
+package com.lunchfood.utils
 
 import android.util.Log
 import com.lunchfood.BuildConfig
