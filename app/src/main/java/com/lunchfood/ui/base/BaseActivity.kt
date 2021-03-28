@@ -5,7 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.lifecycle.ViewModelProvider
 import com.lunchfood.R
+import com.lunchfood.data.api.ApiHelper
+import com.lunchfood.data.api.RetrofitBuilder
+import com.lunchfood.ui.main.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,6 +18,8 @@ import kotlin.coroutines.CoroutineContext
 abstract class BaseActivity(private val transitionMode: TransitionMode = TransitionMode.NONE) : AppCompatActivity(), CoroutineScope {
 
     private lateinit var job: Job
+    private lateinit var viewModel: MainViewModel
+
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
@@ -36,6 +42,8 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
 
         window.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+        setupViewModel()
     }
 
     override fun finish() {
@@ -62,6 +70,15 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+                this,
+                ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+        ).get(MainViewModel::class.java)
+        // 현재 뷰에 대한 viewModel 전역상태로 관리
+        GlobalApplication.setViewModel(viewModel)
     }
 
     private fun statusBarHeight(context: Context): Int {

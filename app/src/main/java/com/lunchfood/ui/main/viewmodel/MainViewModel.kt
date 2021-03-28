@@ -26,4 +26,13 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
             emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
+
+    fun getAddressList(addressParam: HashMap<String, Object>) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.getAddressList(addressParam)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
 }

@@ -2,32 +2,23 @@ package com.lunchfood.ui.main.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.lunchfood.R
-import com.lunchfood.data.api.ApiHelper
-import com.lunchfood.data.api.RetrofitBuilder
 import com.lunchfood.data.model.User
 import com.lunchfood.ui.base.BaseActivity
-import com.lunchfood.ui.base.ViewModelFactory
-import com.lunchfood.ui.main.viewmodel.MainViewModel
+import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.Status
-import kotlinx.android.synthetic.main.login_activity.*
+import kotlinx.android.synthetic.main.activity_login.*
 
 class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
 
-    private lateinit var viewModel: MainViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.login_activity)
-        setupViewModel()
+        setContentView(R.layout.activity_login)
 
         // 회원가입 버튼
         signupBtn.text = HtmlCompat.fromHtml(getString(R.string.signup_comment), HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -44,34 +35,24 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
         }
     }
 
-    private fun setupViewModel() {
-        viewModel = ViewModelProviders.of(
-                this,
-                ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
-        ).get(MainViewModel::class.java)
-    }
-
     private fun insertAccount(data: User) {
-        viewModel.insertAccount(data).observe(this, Observer {
+        GlobalApplication.getViewModel()!!.insertAccount(data).observe(this, {
             it?.let { resource ->
                 when (resource.status) {
+                    // 로딩
+                    Status.PENDING -> {
+//                        progressBar.visibility = View.VISIBLE
+                    }
                     Status.SUCCESS -> {
 //                        recyclerView.visibility = View.VISIBLE
-//                        progressBar.visibility = View.GONE
                         resource.data?.let {
-                            res -> Dlog.i("유저정보 등록 성공")
+                            res -> Dlog.i("유저정보 등록 성공: $res")
                             val intent = Intent(this, AddressMapping::class.java)
                             startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                         }
                     }
                     Status.FAILURE -> {
-//                        recyclerView.visibility = View.VISIBLE
-//                        progressBar.visibility = View.GONE
                         Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                    }
-                    Status.PENDING -> {
-//                        progressBar.visibility = View.VISIBLE
-//                        recyclerView.visibility = View.GONE
                     }
                 }
             }
