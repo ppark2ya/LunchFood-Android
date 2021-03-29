@@ -6,4 +6,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="lunch_red">#DA291C</color>
     <color name="transparent">#00000000</color>
+    <color name="gray">#999999</color>
 </resources>
