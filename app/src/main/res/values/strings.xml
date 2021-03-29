@@ -4,4 +4,8 @@
     <string name="signup_comment">&lt;u>&lt;b>회원가입&lt;b>&lt;/u></string>
     <string name="address_placeholder">동명(읍, 면)으로 검색(ex. 신림동)</string>
     <string name="gps_search_btn_text">내 위치로 검색하기</string>
+    <string name="suggest_permissison_grant">위치를 가져오기 위해서는 위치 권한이 필요합니다.</string>
+    <string name="suggest_permissison_grant_in_setting">위치 권한이 필요합니다. 확인을 누르면 설정 화면으로 이동합니다.</string>
+    <string name="no_permission_msg">권한이 없어 해당 기능을 실행할 수 없습니다.</string>
+    <string name="no_location_msg">위치를 알 수 없습니다.</string>
 </resources>

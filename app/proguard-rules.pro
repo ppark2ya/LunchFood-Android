@@ -87,3 +87,7 @@
   **[] $VALUES;
   public *;
 }
+
+-keep class net.daum.mf.map.n.** { *; }
+-keep class net.daum.mf.map.api.MapView { *; }
+-keep class net.daum.android.map.location.MapViewLocationManager { *; }

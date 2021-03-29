@@ -19,6 +19,7 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        GlobalApplication.setCurrentActivity(this@KakaoLoginActivity)
 
         // 회원가입 버튼
         signupBtn.text = HtmlCompat.fromHtml(getString(R.string.signup_comment), HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -47,7 +48,7 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
 //                        recyclerView.visibility = View.VISIBLE
                         resource.data?.let {
                             res -> Dlog.i("유저정보 등록 성공: $res")
-                            val intent = Intent(this, AddressMapping::class.java)
+                            val intent = Intent(this, AddressMappingActivity::class.java)
                             startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                         }
                     }

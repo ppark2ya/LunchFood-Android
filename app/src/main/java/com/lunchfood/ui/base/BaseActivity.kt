@@ -36,7 +36,7 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
         // 상태바 배경색 transparent 변경 후 상태바 높이만큼 padding을 넣어서 자연스럽게 적용
         window.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN    // FLAG_LAYOUT_NO_LIMITS로 하면 하단 네비게이션바도 transparent 처리됌
         )
         this@BaseActivity.window.decorView.setPadding(0, statusBarHeight(this), 0, 0)
 
