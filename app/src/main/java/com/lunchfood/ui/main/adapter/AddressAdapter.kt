@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lunchfood.R
 import com.lunchfood.data.model.AddressItem
 import com.lunchfood.ui.base.BaseListener
-import com.lunchfood.utils.Dlog
 import kotlinx.android.synthetic.main.address_item.view.*
 
 class AddressAdapter(private val addressList: ArrayList<AddressItem>): RecyclerView.Adapter<AddressAdapter.DataViewHolder>() {

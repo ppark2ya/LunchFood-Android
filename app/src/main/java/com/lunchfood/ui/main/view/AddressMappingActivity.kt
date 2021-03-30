@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import com.lunchfood.R
-import com.lunchfood.data.model.AddressCommonResult
 import com.lunchfood.data.model.AddressItem
 import com.lunchfood.data.model.AddressRequest
 import com.lunchfood.ui.base.BaseActivity
@@ -144,7 +143,7 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
         }
     }
 
-    private fun getAddressList(addressParam: HashMap<String, Object>) {
+    private fun getAddressList(addressParam: HashMap<String, Any>) {
         GlobalApplication.getViewModel()!!.getAddressList(addressParam).observe(this, {
             it?.let { resource ->
                 when (resource.status) {
@@ -158,17 +157,11 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
 //                        progressBar.visibility = View.GONE
                         resource.data?.let { res ->
                             try {
-                                val results = res["results"] as Map<String, Object>
-                                val cmm = results["common"] as Map<String, String>
-                                val addressCommonResult = AddressCommonResult.from(cmm)
+                                val addressCommonResult = res.results.common
+                                val addressJusoList = res.results.juso
+
                                 if(addressCommonResult.errorCode == "0") {
-                                    val tempList = results["juso"] as List<Map<String, String>>
-                                    val addressList = mutableListOf<AddressItem>()
-                                    for(addr in tempList) {
-                                        val addressItem = AddressItem.from(addr)
-                                        addressList.add(addressItem)
-                                    }
-                                    retrieveList(addressList)
+                                    retrieveList(addressJusoList)
                                     scrollToBottom()
                                 }
                             } catch(e: Exception) {

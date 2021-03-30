@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -71,9 +72,16 @@ dependencies {
     implementation "com.kakao.sdk:v2-navi:2.4.1" // 카카오내비
 
     // 카카오맵
-    compile files('libs/libDaumMapAndroid.jar')
+//    compile files('libs/libDaumMapAndroid.jar')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation files('libs/libDaumMapAndroid.jar')
 
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+"
+    // moshi
+    implementation "com.squareup.moshi:moshi:1.11.0"
+    implementation "com.squareup.moshi:moshi-kotlin:1.11.0"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.11.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.9.0"
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.11.0")
 }

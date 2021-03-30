@@ -7,5 +7,5 @@ class MainRepository(private val apiHelper: ApiHelper) {
 
     suspend fun insertAccount(data: User) = apiHelper.insertAccount(data)
     suspend fun getAccount(id: Long) = apiHelper.getAccount(id)
-    suspend fun getAddressList(addressParam: HashMap<String, Object>) = apiHelper.getAddressList(addressParam)
+    suspend fun getAddressList(addressParam: HashMap<String, Any>) = apiHelper.getAddressList(addressParam)
 }

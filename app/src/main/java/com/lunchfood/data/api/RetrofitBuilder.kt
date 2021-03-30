@@ -1,19 +1,20 @@
 package com.lunchfood.data.api
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.lunchfood.utils.Constants.Companion.BASE_URL
 import com.lunchfood.utils.Constants.Companion.KOROAD_URL
+import com.squareup.moshi.*
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
+
 
 object RetrofitBuilder {
 
-    val gson: Gson = GsonBuilder()
-        .setLenient()
-        .create();
+    private val moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
 
     private fun getHttpClient(): OkHttpClient {
         val interceptor = HttpLoggingInterceptor()
@@ -24,8 +25,7 @@ object RetrofitBuilder {
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(getHttpClient())
             .build()
     }
@@ -33,8 +33,7 @@ object RetrofitBuilder {
     private fun getKoroadRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(KOROAD_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(getHttpClient())
             .build()
     }

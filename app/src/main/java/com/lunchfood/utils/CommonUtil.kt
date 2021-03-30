@@ -16,11 +16,11 @@ class CommonUtil {
             JsonAutoDetect.Visibility.ANY
         )
 
-        fun convertFromDataClassToMap(DataClass: Any): HashMap<String, Object> {
-            return mapper.convertValue(DataClass, Map::class.java) as HashMap<String, Object>
+        fun convertFromDataClassToMap(DataClass: Any): HashMap<String, Any> {
+            return mapper.convertValue(DataClass, Map::class.java) as HashMap<String, Any>
         }
 
-        fun <T>convertFromMapToDataClass(convertMap: Map<String, Object>, type: Class<T>): T {
+        fun <T>convertFromMapToDataClass(convertMap: Map<String, Any>, type: Class<T>): T {
             return mapper.convertValue(convertMap, type)
         }
 

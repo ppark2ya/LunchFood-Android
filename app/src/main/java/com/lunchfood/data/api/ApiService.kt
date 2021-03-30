@@ -6,12 +6,12 @@ import retrofit2.http.*
 
 interface ApiService {
     @POST("/insert_acc")
-    suspend fun insertAccount(@Body data: User): Map<String, Object>
+    suspend fun insertAccount(@Body data: User): Map<String, Any>
 
     @GET("/get_acc")
     suspend fun getAccount(@Query("id") id: Long): User
 
     @FormUrlEncoded
     @POST("/addrlink/addrLinkApi.do")
-    suspend fun getAddressList(@FieldMap addressParam: HashMap<String, Object>): HashMap<String, Object>
+    suspend fun getAddressList(@FieldMap addressParam: HashMap<String, Any>): AddressResponse
 }

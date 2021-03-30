@@ -27,7 +27,7 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
         }
     }
 
-    fun getAddressList(addressParam: HashMap<String, Object>) = liveData(Dispatchers.IO) {
+    fun getAddressList(addressParam: HashMap<String, Any>) = liveData(Dispatchers.IO) {
         emit(Resource.pending(data = null))
         try {
             emit(Resource.success(data = mainRepository.getAddressList(addressParam)))

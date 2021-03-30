@@ -8,8 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.lunchfood.R
 import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.api.RetrofitBuilder
-import com.lunchfood.data.model.AddressCommonResult
-import com.lunchfood.data.model.AddressItem
 import com.lunchfood.data.model.AddressRequest
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.ui.base.ViewModelFactory
@@ -17,11 +15,9 @@ import com.lunchfood.ui.main.viewmodel.MainViewModel
 import com.lunchfood.utils.CommonUtil
 import com.lunchfood.utils.Constants.Companion.LATITUDE_DEFAULT
 import com.lunchfood.utils.Constants.Companion.LONGITUDE_DEFAULT
-import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.activity_address_setting.*
 import kotlinx.android.synthetic.main.activity_kakao_map_custom.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -85,7 +81,7 @@ class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListen
         ).get(MainViewModel::class.java)
     }
 
-    private fun getAddressList(addressParam: HashMap<String, Object>) {
+    private fun getAddressList(addressParam: HashMap<String, Any>) {
         viewModel.getAddressList(addressParam).observe(this, {
             it?.let { resource ->
                 when (resource.status) {
@@ -97,14 +93,14 @@ class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListen
 //                        progressBar.visibility = View.GONE
                         resource.data?.let { res ->
                             try {
-                                val results = res["results"] as Map<String, Object>
-                                val cmm = results["common"] as Map<String, String>
-                                val addressCommonResult = AddressCommonResult.from(cmm)
+                                val addressCommonResult = res.results.common
+                                val addressJusoList = res.results.juso
+
                                 if(addressCommonResult.errorCode == "0") {
-                                    val addressList = results["juso"] as List<Map<String, String>>
-                                    val addressItem = AddressItem.from(addressList[0])
-                                    tvRoadAddr.text = addressItem.roadAddr
-                                    tvJibunAddr.text = addressItem.jibunAddr
+                                    if(addressJusoList.isNotEmpty()) {
+                                        tvRoadAddr.text = addressJusoList[0].roadAddr
+                                        tvJibunAddr.text = addressJusoList[0].jibunAddr
+                                    }
                                 }
                             } catch(e: Exception) {
                                 e.printStackTrace()
