@@ -51,11 +51,11 @@ data class AddressItem(
     val liNm: String?,		// 법정리명
     val rn:	String, 	    // 도로명
     val udrtYn:	String,		// 지하여부(0 : 지상, 1 : 지하)
-    val buldMnnm: Number,	// 건물본번
-    val buldSlno: Number,	// 건물부번
+    val buldMnnm: Int,	// 건물본번
+    val buldSlno: Int,	// 건물부번
     val mtYn: String,		// 산여부(0 : 대지, 1 : 산)
-    val lnbrMnnm: Number,	// 지번본번(번지)
-    val lnbrSlno: Number,	// 지번부번(호)
+    val lnbrMnnm: Int,	// 지번본번(번지)
+    val lnbrSlno: Int,	// 지번부번(호)
     val emdNo: String,		// 읍면동일련번호
     val hstryYn: String?,	// 변동이력여부(0: 현행 주소정보, 1: 요청변수의 keyword(검색어)가 변동된 주소정보에서 검색된 정보)
     val relJibun: String?,	// 관련지번

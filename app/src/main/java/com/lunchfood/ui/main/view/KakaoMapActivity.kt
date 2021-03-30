@@ -137,9 +137,7 @@ class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListen
     override fun onReverseGeoCoderFoundAddress(mapReverseGeoCoder: MapReverseGeoCoder?, s: String?) {
         mapReverseGeoCoder.toString()
         val fieldMap = CommonUtil.convertFromDataClassToMap(AddressRequest(keyword = s!!))
-        if (fieldMap != null) {
-            getAddressList(addressParam = fieldMap)
-        }
+        getAddressList(addressParam = fieldMap)
     }
 
     override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) {
