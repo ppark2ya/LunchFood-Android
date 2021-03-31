@@ -108,7 +108,6 @@ class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListen
                         }
                     }
                     Status.FAILURE -> {
-                        addrRecyclerView.visibility = View.GONE
                         Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     }
                 }
