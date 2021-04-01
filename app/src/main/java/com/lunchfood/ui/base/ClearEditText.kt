@@ -1,6 +1,5 @@
 package com.lunchfood.ui.base
 
-import android.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -14,13 +13,19 @@ import android.view.View.OnTouchListener
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import com.lunchfood.utils.Dlog
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 
-class ClearEditText : AppCompatEditText, TextWatcher, OnTouchListener, OnFocusChangeListener {
+open class ClearEditText : AppCompatEditText, TextWatcher, OnTouchListener, OnFocusChangeListener, CoroutineScope {
     private lateinit var mClearDrawable: Drawable
     private var mOnFocusChangeListener: OnFocusChangeListener? = null
     private var mOnTouchListener: OnTouchListener? = null
+    private var debounceMode = false
+    private var _delay: Long? = null    // millisecond
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
+    private var debounceJob: Job? = null
+    private lateinit var _destinationFunction: () -> Unit
 
     constructor(context: Context?) : super(context!!) {
         init()
@@ -92,6 +97,14 @@ class ClearEditText : AppCompatEditText, TextWatcher, OnTouchListener, OnFocusCh
         if (isFocused) {
             setClearIconVisible(s.isNotEmpty())
         }
+        // 참고: https://gist.github.com/faruktoptas/c45272047fae8da61acfb7b14c451793
+        if(debounceMode) {
+            debounceJob?.cancel()
+            debounceJob = launch {
+                delay(_delay!!)
+                _destinationFunction()
+            }
+        }
     }
 
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -100,5 +113,12 @@ class ClearEditText : AppCompatEditText, TextWatcher, OnTouchListener, OnFocusCh
     private fun setClearIconVisible(visible: Boolean) {
         mClearDrawable.setVisible(visible, false)
         setCompoundDrawables(null, null, if (visible) mClearDrawable else null, null)
+    }
+
+    // 실시간 request 요청 시에 부하를 줄이기 위한 debounceMode
+    fun setDebounceRequest(delay: Long? = 100L, destinationFunction: () -> Unit) {
+        debounceMode = true
+        _delay = delay
+        _destinationFunction = destinationFunction
     }
 }

@@ -97,7 +97,7 @@ class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListen
                                 val addressJusoList = res.results.juso
 
                                 if(addressCommonResult.errorCode == "0") {
-                                    if(addressJusoList.isNotEmpty()) {
+                                    if (addressJusoList != null) {
                                         tvRoadAddr.text = addressJusoList[0].roadAddr
                                         tvJibunAddr.text = addressJusoList[0].jibunAddr
                                     }

@@ -24,6 +24,7 @@ import com.lunchfood.ui.base.BaseListener
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.ui.main.adapter.AddressAdapter
 import com.lunchfood.utils.CommonUtil
+import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.activity_address_setting.*
 import kotlinx.android.synthetic.main.header.*
@@ -62,12 +63,12 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
         }
 
         addrSearchBtn.setOnClickListener {
-            var keyword = addressInput.text.toString()
-            val fieldMap = CommonUtil.convertFromDataClassToMap(AddressRequest(keyword = keyword))
-            if (fieldMap != null) {
-                getAddressList(addressParam = fieldMap)
-                CommonUtil.hideKeyboard(this@AddressMappingActivity)
-            }
+            requestGetAddressList()
+        }
+
+        // 입력할 때마다 주소 보이게끔
+        addressInput.setDebounceRequest {
+            requestGetAddressList()
         }
 
         adapter.setOnItemClickListener(object: BaseListener {
@@ -143,6 +144,13 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
         }
     }
 
+    private fun requestGetAddressList() {
+        val keyword = addressInput.text.toString()
+        val fieldMap = CommonUtil.convertFromDataClassToMap(AddressRequest(keyword = keyword))
+        getAddressList(addressParam = fieldMap)
+//      CommonUtil.hideKeyboard(this@AddressMappingActivity)
+    }
+
     private fun getAddressList(addressParam: HashMap<String, Any>) {
         GlobalApplication.getViewModel()!!.getAddressList(addressParam).observe(this, {
             it?.let { resource ->
@@ -161,8 +169,12 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
                                 val addressJusoList = res.results.juso
 
                                 if(addressCommonResult.errorCode == "0") {
-                                    retrieveList(addressJusoList)
-                                    scrollToBottom()
+                                    if (addressJusoList != null) {
+                                        retrieveList(addressJusoList)
+//                                        scrollToBottom()
+                                    }
+                                } else {
+                                    addrRecyclerView.visibility = View.GONE
                                 }
                             } catch(e: Exception) {
                                 e.printStackTrace()

@@ -19,7 +19,7 @@ data class AddressResponse(
 @JsonClass(generateAdapter = true)
 data class AddressResult(
     val common: AddressCommonResult,
-    val juso: List<AddressItem>
+    val juso: List<AddressItem>?
 )
 
 @JsonClass(generateAdapter = true)
