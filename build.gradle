@@ -21,11 +21,11 @@ allprojects {
         jcenter()
         mavenCentral()
 
-        maven{
-            url "https://maven.google.com"
-        }
+        maven{ url "https://maven.google.com" }
         // KAKAO SDK REPO
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
+        // Material CalendarView
+        maven { url 'https://jitpack.io' }
     }
 }
 

@@ -4,14 +4,15 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.lunchfood.R
+import com.lunchfood.ui.base.BaseActivity
 
-class MainActivity : AppCompatActivity() {
+class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_intro)
 
-        val intent = Intent(this, KakaoLoginActivity::class.java)
-        startActivity(intent)
+//        val intent = Intent(this, KakaoLoginActivity::class.java)
+//        startActivity(intent)
     }
 
 }
