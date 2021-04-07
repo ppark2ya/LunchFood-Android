@@ -1,5 +1,6 @@
 package com.lunchfood.ui.main.view
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -11,15 +12,16 @@ import com.lunchfood.data.model.User
 import com.lunchfood.ui.base.BaseActivity
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.utils.Dlog
+import com.lunchfood.utils.PreferenceManager
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.coroutines.launch
 
 class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        GlobalApplication.setCurrentActivity(this@KakaoLoginActivity)
 
         // 회원가입 버튼
         signupBtn.text = HtmlCompat.fromHtml(getString(R.string.signup_comment), HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -48,6 +50,7 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
 //                        recyclerView.visibility = View.VISIBLE
                         resource.data?.let {
                             res -> Dlog.i("유저정보 등록 성공: $res")
+                            PreferenceManager.setLong("userId", data.id)
                             val intent = Intent(this, AddressMappingActivity::class.java)
                             startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                         }
@@ -62,7 +65,7 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
 
     private val callback: ((OAuthToken?, Throwable?) -> Unit) = { token, error ->
         if (error != null) { //Login Fail
-            Dlog.e("Kakao Login Failed :" + error)
+            Dlog.e("Kakao Login Failed : $error")
         } else if (token != null) { //Login Success
             Dlog.i("로그인성공!!")
             UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
@@ -72,6 +75,7 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
                 else if (tokenInfo != null) {
                     Dlog.i("회원번호: ${tokenInfo.id}" + "\n만료시간: ${tokenInfo.expiresIn}")
                     val user = User(tokenInfo.id)
+//                    PreferenceManager.setLong("userId", tokenInfo.id)
                     insertAccount(user)
                 }
             }

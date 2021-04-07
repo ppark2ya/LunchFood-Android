@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.lunchfood"
-        minSdkVersion 19
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -84,6 +84,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-scalars:2.9.0"
     implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.11.0")
-
+    // 달력
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
+    // EncryptedSharedPreferences
+    implementation "androidx.security:security-crypto:1.1.0-alpha03"
 }

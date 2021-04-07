@@ -8,22 +8,9 @@ import com.lunchfood.ui.main.viewmodel.MainViewModel
 
 class GlobalApplication: Application() {
     companion object {
-        private var instance: GlobalApplication? = null
-        private var currentActivity: Activity? = null
+        lateinit var instance: GlobalApplication
+            private set
         private var viewModel: MainViewModel? = null
-
-        fun getCurrentActivity(): Activity? {
-            return currentActivity
-        }
-
-        fun setCurrentActivity(currentActivity: Activity) {
-            Companion.currentActivity = currentActivity
-        }
-
-        fun getGlobalApplicationContext(): GlobalApplication? {
-            if(instance === null) throw IllegalStateException("this application does not inherit com.lunchfood.GlobalApplication")
-            return instance
-        }
 
         fun setViewModel(viewModel: MainViewModel) {
             Companion.viewModel = viewModel
@@ -38,10 +25,9 @@ class GlobalApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         KakaoSdk.init(this, getString(R.string.kakao_app_key))
+        instance = this
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
-        instance = null
-    }
+    val context
+        get() = applicationContext
 }

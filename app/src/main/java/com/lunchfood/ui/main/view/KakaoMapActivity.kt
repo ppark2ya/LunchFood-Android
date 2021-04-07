@@ -36,7 +36,6 @@ class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_kakao_map_custom)
-        GlobalApplication.setCurrentActivity(this@KakaoMapActivity)
         setupMapView()
         setupViewModel()
         GlobalScope.launch {

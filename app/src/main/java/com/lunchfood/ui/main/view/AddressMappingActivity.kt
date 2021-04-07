@@ -39,7 +39,6 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_address_setting)
-        GlobalApplication.setCurrentActivity(this@AddressMappingActivity)
         setupUI()
         setupEventListener()
     }
