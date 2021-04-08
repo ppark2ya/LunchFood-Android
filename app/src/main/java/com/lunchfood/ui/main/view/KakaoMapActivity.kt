@@ -9,12 +9,14 @@ import com.lunchfood.R
 import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.api.RetrofitBuilder
 import com.lunchfood.data.model.AddressRequest
+import com.lunchfood.ui.base.BaseActivity
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.ui.base.ViewModelFactory
 import com.lunchfood.ui.main.viewmodel.MainViewModel
 import com.lunchfood.utils.CommonUtil
 import com.lunchfood.utils.Constants.Companion.LATITUDE_DEFAULT
 import com.lunchfood.utils.Constants.Companion.LONGITUDE_DEFAULT
+import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.activity_address_setting.*
 import kotlinx.android.synthetic.main.activity_kakao_map_custom.*
@@ -27,7 +29,7 @@ import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
 import java.lang.Exception
 
-class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
+class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
 
     private lateinit var mMapView: MapView
     private lateinit var mReverseGeoCoder: MapReverseGeoCoder
@@ -84,12 +86,11 @@ class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListen
         viewModel.getAddressList(addressParam).observe(this, {
             it?.let { resource ->
                 when (resource.status) {
-                    // 로딩
                     Status.PENDING -> {
-//                        progressBar.visibility = View.VISIBLE
+                        loadingStart()
                     }
                     Status.SUCCESS -> {
-//                        progressBar.visibility = View.GONE
+                        loadingEnd()
                         resource.data?.let { res ->
                             try {
                                 val addressCommonResult = res.results.common
@@ -107,7 +108,8 @@ class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListen
                         }
                     }
                     Status.FAILURE -> {
-                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                        loadingEnd()
+                        Dlog.e("getAddressList FAILURE : $it.message")
                     }
                 }
             }
@@ -120,7 +122,7 @@ class KakaoMapActivity : AppCompatActivity(), MapView.CurrentLocationEventListen
         if(mapPointGeo != null) {
             val userNowLocation = MapPoint.mapPointWithGeoCoord(mapPointGeo.latitude, mapPointGeo.longitude)
             mMapView.setMapCenterPoint(userNowLocation, true)
-            GlobalScope.launch {
+            launch {
                 setupAddress()
             }
         }

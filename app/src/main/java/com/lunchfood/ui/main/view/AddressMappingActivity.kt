@@ -154,14 +154,13 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
         GlobalApplication.getViewModel()!!.getAddressList(addressParam).observe(this, {
             it?.let { resource ->
                 when (resource.status) {
-                    // 로딩
                     Status.PENDING -> {
-//                        progressBar.visibility = View.VISIBLE
+                        loadingStart()
                         addrRecyclerView.visibility = View.GONE
                     }
                     Status.SUCCESS -> {
+                        loadingEnd()
                         addrRecyclerView.visibility = View.VISIBLE
-//                        progressBar.visibility = View.GONE
                         resource.data?.let { res ->
                             try {
                                 val addressCommonResult = res.results.common
@@ -181,8 +180,9 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
                         }
                     }
                     Status.FAILURE -> {
+                        loadingEnd()
                         addrRecyclerView.visibility = View.GONE
-                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                        Dlog.e("getAddressList FAILURE : $it.message")
                     }
                 }
             }

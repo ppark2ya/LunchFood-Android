@@ -42,12 +42,11 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
         GlobalApplication.getViewModel()!!.insertAccount(data).observe(this, {
             it?.let { resource ->
                 when (resource.status) {
-                    // 로딩
                     Status.PENDING -> {
-//                        progressBar.visibility = View.VISIBLE
+                        loadingStart()
                     }
                     Status.SUCCESS -> {
-//                        recyclerView.visibility = View.VISIBLE
+                        loadingEnd()
                         resource.data?.let {
                             res -> Dlog.i("유저정보 등록 성공: $res")
                             PreferenceManager.setLong("userId", data.id)
@@ -56,7 +55,8 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
                         }
                     }
                     Status.FAILURE -> {
-                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                        loadingEnd()
+                        Dlog.e("insertAccount FAILURE : $it.message")
                     }
                 }
             }
@@ -75,7 +75,6 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
                 else if (tokenInfo != null) {
                     Dlog.i("회원번호: ${tokenInfo.id}" + "\n만료시간: ${tokenInfo.expiresIn}")
                     val user = User(tokenInfo.id)
-//                    PreferenceManager.setLong("userId", tokenInfo.id)
                     insertAccount(user)
                 }
             }

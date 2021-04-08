@@ -13,9 +13,16 @@ import com.lunchfood.ui.main.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 abstract class BaseActivity(private val transitionMode: TransitionMode = TransitionMode.NONE) : AppCompatActivity(), CoroutineScope {
+
+    enum class TransitionMode {
+        NONE,
+        HORIZON,
+        VERTICAL
+    }
 
     private lateinit var job: Job
     private lateinit var viewModel: MainViewModel
@@ -88,10 +95,15 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
         else 0
     }
 
-    enum class TransitionMode {
-        NONE,
-        HORIZON,
-        VERTICAL
+    fun loadingStart() {
+        launch {
+            GlobalApplication.instance.loadingStart(this@BaseActivity)
+        }
     }
 
+    fun loadingEnd() {
+        launch {
+            GlobalApplication.instance.loadingEnd()
+        }
+    }
 }
