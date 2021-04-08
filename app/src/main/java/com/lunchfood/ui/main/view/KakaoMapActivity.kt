@@ -87,29 +87,27 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
             it?.let { resource ->
                 when (resource.status) {
                     Status.PENDING -> {
-                        loadingStart()
+                        Dlog.i("getAddressList PENDING")
                     }
                     Status.SUCCESS -> {
-                        loadingEnd()
                         resource.data?.let { res ->
                             try {
                                 val addressCommonResult = res.results.common
                                 val addressJusoList = res.results.juso
 
-                                if(addressCommonResult.errorCode == "0") {
+                                if (addressCommonResult.errorCode == "0") {
                                     if (addressJusoList != null) {
                                         tvRoadAddr.text = addressJusoList[0].roadAddr
                                         tvJibunAddr.text = addressJusoList[0].jibunAddr
                                     }
                                 }
-                            } catch(e: Exception) {
+                            } catch (e: Exception) {
                                 e.printStackTrace()
                             }
                         }
                     }
                     Status.FAILURE -> {
-                        loadingEnd()
-                        Dlog.e("getAddressList FAILURE : $it.message")
+                        Dlog.e("getAddressList FAILURE : ${it.message}")
                     }
                 }
             }

@@ -155,18 +155,16 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
             it?.let { resource ->
                 when (resource.status) {
                     Status.PENDING -> {
-                        loadingStart()
                         addrRecyclerView.visibility = View.GONE
                     }
                     Status.SUCCESS -> {
-                        loadingEnd()
                         addrRecyclerView.visibility = View.VISIBLE
                         resource.data?.let { res ->
                             try {
                                 val addressCommonResult = res.results.common
                                 val addressJusoList = res.results.juso
 
-                                if(addressCommonResult.errorCode == "0") {
+                                if (addressCommonResult.errorCode == "0") {
                                     if (addressJusoList != null) {
                                         retrieveList(addressJusoList)
 //                                        scrollToBottom()
@@ -174,15 +172,14 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
                                 } else {
                                     addrRecyclerView.visibility = View.GONE
                                 }
-                            } catch(e: Exception) {
+                            } catch (e: Exception) {
                                 e.printStackTrace()
                             }
                         }
                     }
                     Status.FAILURE -> {
-                        loadingEnd()
                         addrRecyclerView.visibility = View.GONE
-                        Dlog.e("getAddressList FAILURE : $it.message")
+                        Dlog.e("getAddressList FAILURE : ${it.message}")
                     }
                 }
             }

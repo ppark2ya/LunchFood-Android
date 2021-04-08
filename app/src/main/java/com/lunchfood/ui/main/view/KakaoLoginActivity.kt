@@ -47,8 +47,8 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
                     }
                     Status.SUCCESS -> {
                         loadingEnd()
-                        resource.data?.let {
-                            res -> Dlog.i("유저정보 등록 성공: $res")
+                        resource.data?.let { res ->
+                            Dlog.i("유저정보 등록 성공: $res")
                             PreferenceManager.setLong("userId", data.id)
                             val intent = Intent(this, AddressMappingActivity::class.java)
                             startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
@@ -56,7 +56,7 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
                     }
                     Status.FAILURE -> {
                         loadingEnd()
-                        Dlog.e("insertAccount FAILURE : $it.message")
+                        Dlog.e("insertAccount FAILURE : ${it.message}")
                     }
                 }
             }
