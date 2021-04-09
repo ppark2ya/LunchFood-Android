@@ -1,9 +1,13 @@
 package com.lunchfood.ui.main.view
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import com.lunchfood.R
 import com.lunchfood.data.api.ApiHelper
@@ -64,8 +68,14 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
         marker.itemName = "나의 위치"
         marker.tag = 0
         marker.mapPoint = userNowLocation
-        marker.markerType = MapPOIItem.MarkerType.RedPin
-        marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
+        marker.markerType = MapPOIItem.MarkerType.CustomImage
+        marker.customImageBitmap = BitmapFactory.decodeResource(resources, R.drawable.gps_img).let {
+            Bitmap.createScaledBitmap(
+                it, 80, 90, false
+            )
+        }
+        marker.isCustomImageAutoscale = false
+        marker.setCustomImageAnchor(0.5f, 1.0f)
         mMapView.addPOIItem(marker)
     }
 

@@ -25,7 +25,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:padding="25dp"
                 android:orientation="vertical">
 
@@ -51,7 +51,7 @@
                         android:hint="@string/address_placeholder"
                         android:padding="10dp"
                         android:layout_marginRight="10dp"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:inputType="textAutoComplete" />
 
                     <ImageView
@@ -81,12 +81,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:drawableLeft="@drawable/left_fire_customize"
                             android:drawablePadding="15dp"
                             android:gravity="center"
                             android:textColor="@color/white"
-                            android:textSize="15dp"
-                            android:text="@string/gps_search_btn_text" />
+                            android:textSize="15sp"
+                            android:text="@string/gps_search_btn_text"
+                            app:drawableLeftCompat="@drawable/left_fire_customize" />
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
 

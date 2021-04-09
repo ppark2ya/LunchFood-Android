@@ -9,4 +9,13 @@
     <string name="suggest_permissison_grant_in_setting">위치 권한이 필요합니다. 확인을 누르면 설정 화면으로 이동합니다.</string>
     <string name="no_permission_msg">권한이 없어 해당 기능을 실행할 수 없습니다.</string>
     <string name="no_location_msg">위치를 알 수 없습니다.</string>
+    <string name="home">홈</string>
+    <string name="location_setting">위치설정</string>
+    <string name="eat_history">식사기록</string>
+    <string name="app_talk">점심줄토크</string>
+    <string name="my_menu">내점심줄</string>
+    <string name="signup">회원가입</string>
+    <string name="visitHelper">점심줄 놓지마가 처음이신가요?</string>
+    <string name="jibunAddr">지번주소</string>
+    <string name="roadAddr">도로명주소</string>
 </resources>

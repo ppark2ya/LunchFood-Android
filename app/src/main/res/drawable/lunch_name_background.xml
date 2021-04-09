@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--    일종의 Trick 임 음수 dp 붙여서 적용 되지 않게 하는 것이. -->
+    <item android:top="-10dp" android:left="-20dp" android:right="-20dp">
+        <shape android:shape="rectangle">
+            <size android:height="1dp" />
+            <solid android:color="#4DDA291C" />
+        </shape>
+    </item>
+</layer-list>

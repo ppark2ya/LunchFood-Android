@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeItem"
+        android:icon="@drawable/ic_home"
+        android:title="@string/home" />
+    <item
+        android:id="@+id/locationSettingItem"
+        android:icon="@drawable/ic_location"
+        android:title="@string/location_setting" />
+    <item
+        android:id="@+id/eatHistoryItem"
+        android:icon="@drawable/ic_eat_history"
+        android:title="@string/eat_history" />
+    <item
+        android:id="@+id/appTalkItem"
+        android:icon="@drawable/ic_app_talk"
+        android:title="@string/app_talk" />
+    <item
+        android:id="@+id/myMenuItem"
+        android:icon="@drawable/ic_my_menu"
+        android:title="@string/my_menu" />
+</menu>

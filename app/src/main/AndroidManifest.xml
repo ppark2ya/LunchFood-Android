@@ -24,15 +24,20 @@
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key"/>
 
         <activity android:name=".ui.main.view.IntroActivity" android:screenOrientation="portrait">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity android:name=".ui.main.view.KakaoLoginActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ui.main.view.AddressMappingActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ui.main.view.KakaoMapActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.main.view.MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.view.KakaoLoginActivity" android:screenOrientation="portrait" />
-        <activity android:name=".ui.main.view.AddressMappingActivity" android:screenOrientation="portrait" />
-        <activity android:name=".ui.main.view.KakaoMapActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.main.view.MainActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

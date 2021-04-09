@@ -53,14 +53,14 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="점심줄 놓지마가 처음이신가요?" />
+                android:text="@string/visitHelper" />
 
             <TextView
                 android:id="@+id/signupBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="회원가입" />
+                android:text="@string/signup" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
