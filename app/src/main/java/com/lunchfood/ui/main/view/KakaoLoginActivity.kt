@@ -1,6 +1,5 @@
 package com.lunchfood.ui.main.view
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -15,7 +14,6 @@ import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.PreferenceManager
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.coroutines.launch
 
 class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
 
@@ -48,10 +46,14 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
                     Status.SUCCESS -> {
                         loadingEnd()
                         resource.data?.let { res ->
-                            Dlog.i("유저정보 등록 성공: $res")
-                            PreferenceManager.setLong("userId", data.id)
-                            val intent = Intent(this, AddressMappingActivity::class.java)
-                            startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                            if(res.resultCode == 200) {
+                                Dlog.i("유저정보 등록 성공: $res")
+                                PreferenceManager.setLong("userId", data.id)
+                                val intent = Intent(this, AddressMappingActivity::class.java)
+                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                            } else {
+                                Toast.makeText(this@KakaoLoginActivity, "로그인에 실패했습니다.", Toast.LENGTH_SHORT)
+                            }
                         }
                     }
                     Status.FAILURE -> {

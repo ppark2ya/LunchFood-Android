@@ -1,18 +1,17 @@
 package com.lunchfood.ui.main.view
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.view.View
+import android.widget.RelativeLayout
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import com.lunchfood.R
 import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.api.RetrofitBuilder
 import com.lunchfood.data.model.AddressRequest
+import com.lunchfood.data.model.User
 import com.lunchfood.ui.base.BaseActivity
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.ui.base.ViewModelFactory
@@ -21,6 +20,7 @@ import com.lunchfood.utils.CommonUtil
 import com.lunchfood.utils.Constants.Companion.LATITUDE_DEFAULT
 import com.lunchfood.utils.Constants.Companion.LONGITUDE_DEFAULT
 import com.lunchfood.utils.Dlog
+import com.lunchfood.utils.PreferenceManager
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.activity_address_setting.*
 import kotlinx.android.synthetic.main.activity_kakao_map_custom.*
@@ -36,8 +36,12 @@ import java.lang.Exception
 class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
 
     private lateinit var mMapView: MapView
+    private lateinit var mapViewContainer: RelativeLayout
     private lateinit var mReverseGeoCoder: MapReverseGeoCoder
     private lateinit var viewModel: MainViewModel
+    private var mLat: Double = LATITUDE_DEFAULT
+    private var mLon: Double = LONGITUDE_DEFAULT
+    private var mAddress: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,20 +52,42 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
             setupAddress()
         }
 
+        setUserAddrBtn.setOnClickListener {
+            val userId = PreferenceManager.getLong("userId")
+            updateLocation(
+                User(id = userId, x = mLat.toString(), y = mLon.toString(), address = mAddress, type = "WGS84")
+            )
+        }
     }
+
+//    override fun onResume() {
+//        super.onResume()
+//        setupMapView()
+//        setupViewModel()
+//        GlobalScope.launch {
+//            setupAddress()
+//        }
+//
+//        setUserAddrBtn.setOnClickListener {
+//            val userId = PreferenceManager.getLong("userId")
+//            updateLocation(
+//                User(id = userId, x = mLat.toString(), y = mLon.toString(), address = mAddress, type = "WGS84")
+//            )
+//        }
+//    }
 
     private fun setupMapView() {
         mMapView = MapView(this)
         mMapView.setCurrentLocationEventListener(this)
         // mMapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
 
-        val mapViewContainer = rlMapView
+        mapViewContainer = rlMapView
         mapViewContainer.addView(mMapView)
 
         val intent = intent
-        val lat = intent.getDoubleExtra("lat", LATITUDE_DEFAULT)
-        val lon = intent.getDoubleExtra("lon", LONGITUDE_DEFAULT)
-        val userNowLocation = MapPoint.mapPointWithGeoCoord(lat, lon)
+        mLat = intent.getDoubleExtra("lat", LATITUDE_DEFAULT)
+        mLon = intent.getDoubleExtra("lon", LONGITUDE_DEFAULT)
+        val userNowLocation = MapPoint.mapPointWithGeoCoord(mLat, mLon)
         mMapView.setMapCenterPoint(userNowLocation, true)
 
         val marker = MapPOIItem()
@@ -124,6 +150,36 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
         })
     }
 
+    private fun updateLocation(data: User) {
+        GlobalApplication.getViewModel()!!.updateLocation(data).observe(this, {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.PENDING -> {
+                        loadingStart()
+                    }
+                    Status.SUCCESS -> {
+                        loadingEnd()
+                        resource.data?.let { res ->
+                            if(res.resultCode == 200) {
+                                val intent = Intent(this, BridgeActivity::class.java)
+                                intent.putExtra("x", data.x)   // 위도
+                                intent.putExtra("y", data.y)  // 경도
+                                intent.putExtra("roadAddr", data.address)   // 위도
+                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                            } else {
+                                Toast.makeText(this@KakaoMapActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)
+                            }
+                        }
+                    }
+                    Status.FAILURE -> {
+                        loadingEnd()
+                        Dlog.e("getAddressList FAILURE : ${it.message}")
+                    }
+                }
+            }
+        })
+    }
+
     override fun onCurrentLocationUpdate(mapView: MapView?, currentLocation: MapPoint?, accuracyInMeters: Float) {
         val mapPointGeo: MapPoint.GeoCoordinate? = currentLocation?.mapPointGeoCoord
 
@@ -144,11 +200,16 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
 
     override fun onReverseGeoCoderFoundAddress(mapReverseGeoCoder: MapReverseGeoCoder?, s: String?) {
         mapReverseGeoCoder.toString()
-        val fieldMap = CommonUtil.convertFromDataClassToMap(AddressRequest(keyword = s!!))
+        mAddress = s!!
+        val fieldMap = CommonUtil.convertFromDataClassToMap(AddressRequest(keyword = mAddress))
         getAddressList(addressParam = fieldMap)
     }
 
-    override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) {
+    override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) {}
+
+    override fun onStop() {
+        super.onStop()
+        mapViewContainer.removeView(rlMapView)
     }
 
     override fun onDestroy() {

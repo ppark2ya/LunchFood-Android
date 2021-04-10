@@ -19,12 +19,15 @@ import com.google.android.material.snackbar.Snackbar
 import com.lunchfood.R
 import com.lunchfood.data.model.AddressItem
 import com.lunchfood.data.model.AddressRequest
+import com.lunchfood.data.model.User
 import com.lunchfood.ui.base.BaseActivity
 import com.lunchfood.ui.base.BaseListener
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.ui.main.adapter.AddressAdapter
 import com.lunchfood.utils.CommonUtil
+import com.lunchfood.utils.Constants.Companion.OPEN_API_LOCATION_KEY
 import com.lunchfood.utils.Dlog
+import com.lunchfood.utils.PreferenceManager
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.activity_address_setting.*
 import kotlinx.android.synthetic.main.header.*
@@ -73,8 +76,17 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
         adapter.setOnItemClickListener(object: BaseListener {
             override fun<T> onItemClickListener(v: View, item: T, pos: Int) {
                 val addressItem = item as AddressItem
-                Toast.makeText(applicationContext, addressItem.jibunAddr, Toast.LENGTH_LONG).show()
-                addressInput.setText(addressItem.jibunAddr)
+                val requestBody = AddressRequest(
+                    confmKey = OPEN_API_LOCATION_KEY,
+                    admCd = addressItem.admCd,
+                    rnMgtSn = addressItem.rnMgtSn,
+                    udrtYn = addressItem.udrtYn,
+                    buldMnnm = addressItem.buldMnnm,
+                    buldSlno = addressItem.buldSlno,
+                    roadAddr = addressItem.roadAddr
+                )
+                val fieldMap = CommonUtil.convertFromDataClassToMap(requestBody)
+                getAddressCoord(addressParam = fieldMap)
             }
         })
 
@@ -193,10 +205,78 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
         }
     }
 
+    private fun getAddressCoord(addressParam: HashMap<String, Any>) {
+        GlobalApplication.getViewModel()!!.getAddressCoord(addressParam).observe(this, {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.PENDING -> {
+                        loadingStart()
+                    }
+                    Status.SUCCESS -> {
+                        loadingEnd()
+                        resource.data?.let { res ->
+                            try {
+                                val addressCommonResult = res.results.common
+                                val addressCoord = res.results.juso
+
+                                if (addressCommonResult.errorCode == "0") {
+                                    if (addressCoord != null) {
+                                        val coordItem = addressCoord[0]
+                                        val userId = PreferenceManager.getLong("userId")
+                                        val roadAddr = addressParam["roadAddr"]
+                                        updateLocation(
+                                            User(id = userId, x = coordItem.entX, y = coordItem.entY, address = roadAddr.toString(), type = "UTMK")
+                                        )
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.FAILURE -> {
+                        loadingEnd()
+                        Dlog.e("getAddressCoord FAILURE : ${it.message}")
+                    }
+                }
+            }
+        })
+    }
+
+    private fun updateLocation(data: User) {
+        GlobalApplication.getViewModel()!!.updateLocation(data).observe(this, {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.PENDING -> {
+                        loadingStart()
+                    }
+                    Status.SUCCESS -> {
+                        loadingEnd()
+                        resource.data?.let { res ->
+                            if(res.resultCode == 200) {
+                                val intent = Intent(this, MainActivity::class.java)
+                                intent.putExtra("x", data.x)   // 위도
+                                intent.putExtra("y", data.y)  // 경도
+                                intent.putExtra("roadAddr", data.address)   // 위도
+                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                            } else {
+                                Toast.makeText(this@AddressMappingActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)
+                            }
+                        }
+                    }
+                    Status.FAILURE -> {
+                        loadingEnd()
+                        Dlog.e("getAddressList FAILURE : ${it.message}")
+                    }
+                }
+            }
+        })
+    }
+
     private fun scrollToBottom() {
         scrollview.post {
             // 주소 검색 component 위 쪽까지 이동
-            var scrollHeight = scrollviewR.top - inputWrapper.top
+            val scrollHeight = scrollviewR.top - inputWrapper.top
             scrollview.smoothScrollTo(0, scrollviewR.top - (scrollHeight + 10))
         }
     }
