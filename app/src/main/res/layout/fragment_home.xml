@@ -59,7 +59,7 @@
                         android:textColor="@color/black"
                         android:textSize="23sp"
                         android:textStyle="bold"
-                        android:text="톤쇼우" />
+                        android:text="" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -84,6 +84,7 @@
                         android:id="@+id/tvRestaurantName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
                         android:text="" />
                 </LinearLayout>
                 <LinearLayout
@@ -100,6 +101,7 @@
                         android:id="@+id/tvRestaurantDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
                         android:text="" />
                 </LinearLayout>
 
@@ -109,15 +111,15 @@
                     android:layout_marginTop="30dp"
                     android:orientation="horizontal">
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/nextPlace"
                         android:layout_width="0dp"
                         android:layout_weight=".5"
                         android:layout_height="50dp"
-                        android:layout_marginEnd="5dp"
-                        app:cardCornerRadius="8dp">
+                        android:layout_marginEnd="5dp">
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@color/black">
+                            android:background="@drawable/rl_red_border">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -126,8 +128,7 @@
                                 android:gravity="center"
                                 android:textColor="@color/lunch_red"
                                 android:textSize="15sp"
-                                android:text="@string/another_menu"
-                                app:drawableLeftCompat="@drawable/left_fire_customize" />
+                                android:text="@string/another_menu" />
                         </RelativeLayout>
                     </androidx.cardview.widget.CardView>
                     <androidx.cardview.widget.CardView

@@ -159,8 +159,8 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
             if (location != null) {
                 if(type == "KakaoMap") {
                     val intent = Intent(this, KakaoMapActivity::class.java)
-                    intent.putExtra("lat", location.latitude)   // 위도
-                    intent.putExtra("lon", location.longitude)  // 경도
+                    intent.putExtra("lat", location.latitude)   // 위도(y)
+                    intent.putExtra("lon", location.longitude)  // 경도(x)
                     startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 } else {
                     val addressItem = item as AddressItem
@@ -281,9 +281,9 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
                         resource.data?.let { res ->
                             if(res.resultCode == 200) {
                                 val intent = Intent(this, MainActivity::class.java)
-                                intent.putExtra("x", data.x)   // 위도
-                                intent.putExtra("y", data.y)  // 경도
-                                intent.putExtra("roadAddr", data.address)   // 위도
+                                intent.putExtra("lon", data.x)   // 경도
+                                intent.putExtra("lat", data.y)  // 위도
+                                intent.putExtra("roadAddr", data.address)   // 주소
                                 startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                             } else {
                                 Toast.makeText(this@AddressMappingActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)

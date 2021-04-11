@@ -42,7 +42,7 @@ class BridgeActivity: BaseActivity(TransitionMode.HORIZON) {
                                 }
                             } else {
                                 val intent = Intent(this, KakaoLoginActivity::class.java)
-                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
                             }
                         }
                     }
@@ -57,9 +57,9 @@ class BridgeActivity: BaseActivity(TransitionMode.HORIZON) {
 
     private fun forwardMainPage(x: String, y: String, address: String) {
         val intent = Intent(this@BridgeActivity, MainActivity::class.java)
-        intent.putExtra("x", x)   // 위도
-        intent.putExtra("y", y)  // 경도
-        intent.putExtra("roadAddr", address)   // 위도
+        intent.putExtra("lon", x)   // 경도
+        intent.putExtra("lat", y)  // 위도
+        intent.putExtra("roadAddr", address)   // 도로명 주소
         startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }
 

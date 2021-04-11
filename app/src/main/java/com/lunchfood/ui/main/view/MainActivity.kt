@@ -39,8 +39,8 @@ class MainActivity: BaseActivity(TransitionMode.HORIZON) {
 
         val intent = intent
         val bundle = Bundle()
-        bundle.putDouble("lat", intent.getDoubleExtra("x", Constants.LATITUDE_DEFAULT))
-        bundle.putDouble("lon", intent.getDoubleExtra("y", Constants.LONGITUDE_DEFAULT))
+        bundle.putDouble("lat", intent.getDoubleExtra("lat", Constants.LATITUDE_DEFAULT))
+        bundle.putDouble("lon", intent.getDoubleExtra("lon", Constants.LONGITUDE_DEFAULT))
         bundle.putString("roadAddr", intent.getStringExtra("roadAddr"))
         homeFragment.arguments = bundle
 

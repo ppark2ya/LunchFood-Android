@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.lunchfood.R
 import com.lunchfood.data.model.BestMenuRequest
 import com.lunchfood.ui.base.BaseFragment
@@ -20,7 +21,7 @@ import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
-class HomeFragment: BaseFragment() {
+class HomeFragment: BaseFragment(), View.OnClickListener {
 
     private lateinit var homeView: View
     private lateinit var mMapView: MapView
@@ -28,6 +29,7 @@ class HomeFragment: BaseFragment() {
     private var mLon: Double = Constants.LONGITUDE_DEFAULT  // 가게 y좌표
     private var mAddress: String = ""       // 가게 주소(도로명)
     private var mDistance: String = ""       // 가게까지 거리
+    private var mRestourant: String = ""     // 가게명
     private var x: Double = 0.0          // 사용자 x좌표
     private var y: Double = 0.0          // 사용자 y좌표
     private lateinit var roadAddr: String   // 사용자 설정 주소
@@ -79,6 +81,7 @@ class HomeFragment: BaseFragment() {
         marker.setCustomImageAnchor(0.5f, 1.0f)
         mMapView.addPOIItem(marker)
 
+        tvRestaurantTitleName.text = mRestourant
         tvRestaurantName.text = mAddress
         "${mDistance}m".also { tvRestaurantDistance.text = it }
     }
@@ -95,10 +98,12 @@ class HomeFragment: BaseFragment() {
                         resource.data?.let { res ->
                             if(res.resultCode == 200) {
                                 val bestMenuList = res.data!!
+                                Dlog.i("메뉴목록 데이터::: $bestMenuList")
                                 mLat = bestMenuList[0].lat
                                 mLon = bestMenuList[0].lon
                                 mAddress = bestMenuList[0].addressName
                                 mDistance = bestMenuList[0].distance
+                                mRestourant = bestMenuList[0].placeName
                                 setRestaurantLocation()
                             }
                         }
@@ -110,5 +115,13 @@ class HomeFragment: BaseFragment() {
                 }
             }
         })
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id) {
+            R.id.nextPlace -> {
+                Toast.makeText(activity, "asdad", Toast.LENGTH_SHORT)
+            }
+        }
     }
 }
