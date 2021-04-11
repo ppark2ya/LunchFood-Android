@@ -2,6 +2,7 @@ package com.lunchfood.data.api
 
 import com.lunchfood.data.api.RetrofitBuilder.koroadService
 import com.lunchfood.data.model.*
+import retrofit2.http.Body
 
 class ApiHelper(private val apiService: ApiService) {
 
@@ -10,4 +11,5 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun updateLocation(data: User) = apiService.updateLocation(data)
     suspend fun getAddressList(addressParam: HashMap<String, Any>) = koroadService.getAddressList(addressParam)
     suspend fun getAddressCoord(addressParam: HashMap<String, Any>) = koroadService.getAddressCoord(addressParam)
+    suspend fun getBestMenuList(data: BestMenuRequest) = apiService.getBestMenuList(data)
 }

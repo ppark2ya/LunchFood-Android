@@ -38,12 +38,15 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
     private lateinit var adapter: AddressAdapter
     private val REQUEST_CODE = 1
     private lateinit var layout: View
+    private var mType: String = ""
+    private lateinit var mTargetItem: Any
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_address_setting)
         setupUI()
         setupEventListener()
+        isLocationPermissionGranted()
     }
 
     private fun setupUI() {
@@ -75,23 +78,19 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
 
         adapter.setOnItemClickListener(object: BaseListener {
             override fun<T> onItemClickListener(v: View, item: T, pos: Int) {
-                val addressItem = item as AddressItem
-                val requestBody = AddressRequest(
-                    confmKey = OPEN_API_LOCATION_KEY,
-                    admCd = addressItem.admCd,
-                    rnMgtSn = addressItem.rnMgtSn,
-                    udrtYn = addressItem.udrtYn,
-                    buldMnnm = addressItem.buldMnnm,
-                    buldSlno = addressItem.buldSlno,
-                    roadAddr = addressItem.roadAddr
-                )
-                val fieldMap = CommonUtil.convertFromDataClassToMap(requestBody)
-                getAddressCoord(addressParam = fieldMap)
+                mType = "Bridge"
+                mTargetItem = item as AddressItem
+                if(isLocationPermissionGranted()) {
+                    goNextActivity(mType, item as AddressItem)
+                }
             }
         })
 
         gpsSearchBtn.setOnClickListener {
-            isLocationPermissionGranted()
+            mType = "KakaoMap"
+            if(isLocationPermissionGranted()) {
+                goNextActivity(mType, null)
+            }
         }
     }
 
@@ -100,7 +99,10 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
         if(requestCode == REQUEST_CODE) {
             // 위치정보 승인
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                isLocationPermissionGranted()
+                if(mType != "") {
+                    goNextActivity(mType, mTargetItem as AddressItem)
+                }
+                CommonUtil.hideKeyboard(this@AddressMappingActivity)
             } else {
                 Toast.makeText(applicationContext, R.string.no_permission_msg, Toast.LENGTH_SHORT).show()
             }
@@ -108,7 +110,7 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
     }
 
     // 참고: https://github.com/manorgass/tistory/blob/master/android/PermissionTest/app/src/main/java/com/tistory/manorgass/permissiontest/MainActivity.kt
-    private fun isLocationPermissionGranted() {
+    private fun isLocationPermissionGranted(): Boolean {
         val preference = getPreferences(Context.MODE_PRIVATE)
         val isFirstCheck = preference.getBoolean("isFirstPermissionCheck", true)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -140,17 +142,42 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
                     snackBar.show()
                 }
             }
+            return false
         } else {
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                if (location != null) {
+            return true
+        }
+    }
+
+    private fun goNextActivity(type: String, item: AddressItem?) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                if(type == "KakaoMap") {
                     val intent = Intent(this, KakaoMapActivity::class.java)
                     intent.putExtra("lat", location.latitude)   // 위도
                     intent.putExtra("lon", location.longitude)  // 경도
                     startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 } else {
-                    Toast.makeText(applicationContext, R.string.no_location_msg, Toast.LENGTH_SHORT).show()
+                    val addressItem = item as AddressItem
+                    val requestBody = AddressRequest(
+                        confmKey = OPEN_API_LOCATION_KEY,
+                        admCd = addressItem.admCd,
+                        rnMgtSn = addressItem.rnMgtSn,
+                        udrtYn = addressItem.udrtYn,
+                        buldMnnm = addressItem.buldMnnm,
+                        buldSlno = addressItem.buldSlno,
+                        roadAddr = addressItem.roadAddr
+                    )
+                    val fieldMap = CommonUtil.convertFromDataClassToMap(requestBody)
+                    getAddressCoord(addressParam = fieldMap)
                 }
+            } else {
+                Toast.makeText(applicationContext, R.string.no_location_msg, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -159,7 +186,6 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
         val keyword = addressInput.text.toString()
         val fieldMap = CommonUtil.convertFromDataClassToMap(AddressRequest(keyword = keyword))
         getAddressList(addressParam = fieldMap)
-//      CommonUtil.hideKeyboard(this@AddressMappingActivity)
     }
 
     private fun getAddressList(addressParam: HashMap<String, Any>) {

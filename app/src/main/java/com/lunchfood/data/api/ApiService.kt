@@ -51,4 +51,14 @@ interface ApiService {
     @FormUrlEncoded
     @POST("/addrlink/addrCoordApi.do")
     suspend fun getAddressCoord(@FieldMap addressParam: HashMap<String, Any>): AddressCoordResponse
+
+    /**
+     * @param id: 사용자 ID
+     * @param x
+     * @param y
+     * @param interval_date
+     * @desc 추천 식당 정보 반환
+     */
+    @POST("/recommend/best_menu")
+    suspend fun getBestMenuList(@Body data: BestMenuRequest): RetrofitResponse<List<BestMenu>>
 }

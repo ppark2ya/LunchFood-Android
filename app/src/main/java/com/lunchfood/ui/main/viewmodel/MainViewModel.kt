@@ -53,4 +53,13 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
             emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
+
+    fun getBestMenuList(data: BestMenuRequest) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.getBestMenuList(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
 }

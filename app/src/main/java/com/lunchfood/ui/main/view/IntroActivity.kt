@@ -16,6 +16,7 @@ class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)
 
+        loadingStart()
         val userId = PreferenceManager.getLong("userId")
         getAccount(User(userId))
     }
@@ -24,16 +25,13 @@ class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
         GlobalApplication.getViewModel()!!.getAccount(data).observe(this, {
             it?.let { resource ->
                 when(resource.status) {
-                    Status.PENDING -> {
-                        loadingStart()
-                    }
+                    Status.PENDING -> {}
                     Status.SUCCESS -> {
-                        loadingEnd()
                         resource.data?.let { res ->
                             if(res.resultCode == 200) {
                                 val intent = Intent(this, MainActivity::class.java)
-                                intent.putExtra("x", res.data!!.x)   // 위도
-                                intent.putExtra("y", res.data.y)  // 경도
+                                intent.putExtra("x", res.data!!.x!!.toDouble())   // 위도
+                                intent.putExtra("y", res.data.y!!.toDouble())  // 경도
                                 intent.putExtra("roadAddr", res.data.address)   // 위도
                                 startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                             } else {
@@ -49,5 +47,10 @@ class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
                 }
             }
         })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        loadingEnd()
     }
 }

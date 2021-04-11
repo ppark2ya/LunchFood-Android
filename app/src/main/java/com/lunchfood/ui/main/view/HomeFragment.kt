@@ -6,19 +6,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.lunchfood.R
+import com.lunchfood.data.model.BestMenuRequest
+import com.lunchfood.ui.base.BaseFragment
+import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.utils.Constants
+import com.lunchfood.utils.Dlog
+import com.lunchfood.utils.PreferenceManager
+import com.lunchfood.utils.Status
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.header.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
 
-class HomeFragment: Fragment() {
+class HomeFragment: BaseFragment() {
 
     private lateinit var homeView: View
     private lateinit var mMapView: MapView
-    private lateinit var mReverseGeoCoder: MapReverseGeoCoder
+    private var mLat: Double = Constants.LATITUDE_DEFAULT   // 가게 x좌표
+    private var mLon: Double = Constants.LONGITUDE_DEFAULT  // 가게 y좌표
+    private var mAddress: String = ""       // 가게 주소(도로명)
+    private var mDistance: String = ""       // 가게까지 거리
+    private var x: Double = 0.0          // 사용자 x좌표
+    private var y: Double = 0.0          // 사용자 y좌표
+    private lateinit var roadAddr: String   // 사용자 설정 주소
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,32 +38,77 @@ class HomeFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         homeView = inflater.inflate(R.layout.fragment_home, container, false)
+
         mMapView = MapView(activity)
-        // mMapView.setCurrentLocationEventListener(this)
-        // mMapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+        mMapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
 
         val mapViewContainer = homeView.findViewById<ViewGroup>(R.id.rlMainMapView)
         mapViewContainer.addView(mMapView)
+        val extra = arguments
+        if(extra != null) {
+            x = extra.getDouble("lat")
+            y = extra.getDouble("lon")
+            roadAddr = extra.getString("roadAddr", "")
+        }
 
-        val lat = Constants.LATITUDE_DEFAULT
-        val lon = Constants.LONGITUDE_DEFAULT
-        val userNowLocation = MapPoint.mapPointWithGeoCoord(lat, lon)
+        return homeView
+    }
+
+    override fun onResume() {
+        super.onResume()
+        headerBackBtn.visibility = View.GONE
+        val userId = PreferenceManager.getLong("userId")
+        getBestMenuList(BestMenuRequest(id = userId, x.toString(), y.toString()))
+    }
+
+    private fun setRestaurantLocation() {
+        val userNowLocation = MapPoint.mapPointWithGeoCoord(mLat, mLon)
         mMapView.setMapCenterPoint(userNowLocation, true)
 
         val marker = MapPOIItem()
-        marker.itemName = "나의 위치"
+        marker.itemName = mAddress
         marker.tag = 0
         marker.mapPoint = userNowLocation
         marker.markerType = MapPOIItem.MarkerType.CustomImage
         marker.customImageBitmap = BitmapFactory.decodeResource(resources, R.drawable.gps_img).let {
             Bitmap.createScaledBitmap(
-                it, 80, 90, false
+                    it, 80, 90, false
             )
         }
         marker.isCustomImageAutoscale = false
         marker.setCustomImageAnchor(0.5f, 1.0f)
         mMapView.addPOIItem(marker)
 
-        return homeView
+        tvRestaurantName.text = mAddress
+        "${mDistance}m".also { tvRestaurantDistance.text = it }
+    }
+
+    private fun getBestMenuList(data: BestMenuRequest) {
+        GlobalApplication.getViewModel()!!.getBestMenuList(data).observe(this, {
+            it?.let { resource ->
+                when(resource.status) {
+                    Status.PENDING -> {
+                        loadingStart()
+                    }
+                    Status.SUCCESS -> {
+                        loadingEnd()
+                        resource.data?.let { res ->
+                            if(res.resultCode == 200) {
+                                val bestMenuList = res.data!!
+                                mLat = bestMenuList[0].lat
+                                mLon = bestMenuList[0].lon
+                                mAddress = bestMenuList[0].addressName
+                                mDistance = bestMenuList[0].distance
+                                setRestaurantLocation()
+                            }
+                        }
+                    }
+                    Status.FAILURE -> {
+                        loadingEnd()
+                        Dlog.e("getBestMenuList FAILURE : ${it.message}")
+                    }
+                }
+            }
+        })
     }
 }

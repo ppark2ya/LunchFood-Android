@@ -18,4 +18,8 @@
     <string name="visitHelper">점심줄 놓지마가 처음이신가요?</string>
     <string name="jibunAddr">지번주소</string>
     <string name="roadAddr">도로명주소</string>
+    <string name="restaurant">식당</string>
+    <string name="distance">거리</string>
+    <string name="another_menu">다른 추천</string>
+    <string name="choice">선택</string>
 </resources>

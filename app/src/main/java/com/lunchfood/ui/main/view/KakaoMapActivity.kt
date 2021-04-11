@@ -60,22 +60,6 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
         }
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        setupMapView()
-//        setupViewModel()
-//        GlobalScope.launch {
-//            setupAddress()
-//        }
-//
-//        setUserAddrBtn.setOnClickListener {
-//            val userId = PreferenceManager.getLong("userId")
-//            updateLocation(
-//                User(id = userId, x = mLat.toString(), y = mLon.toString(), address = mAddress, type = "WGS84")
-//            )
-//        }
-//    }
-
     private fun setupMapView() {
         mMapView = MapView(this)
         mMapView.setCurrentLocationEventListener(this)
@@ -162,9 +146,6 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
                         resource.data?.let { res ->
                             if(res.resultCode == 200) {
                                 val intent = Intent(this, BridgeActivity::class.java)
-                                intent.putExtra("x", data.x)   // 위도
-                                intent.putExtra("y", data.y)  // 경도
-                                intent.putExtra("roadAddr", data.address)   // 위도
                                 startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                             } else {
                                 Toast.makeText(this@KakaoMapActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)

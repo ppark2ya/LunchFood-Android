@@ -10,6 +10,7 @@ import com.lunchfood.R.id.eatHistoryItem
 import com.lunchfood.R.id.appTalkItem
 import com.lunchfood.R.id.myMenuItem
 import com.lunchfood.ui.base.BaseActivity
+import com.lunchfood.utils.Constants
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -27,6 +28,21 @@ class MainActivity: BaseActivity(TransitionMode.HORIZON) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupFragments()
+    }
+
+    private fun setupFragments() {
+        homeFragment = HomeFragment()
+        locationSettingFragment = LocationSettingFragment()
+        historyFragment = HistoryFragment()
+        appTalkFragment = AppTalkFragment()
+        myMenuFragment = MyMenuFragment()
+
+        val intent = intent
+        val bundle = Bundle()
+        bundle.putDouble("lat", intent.getDoubleExtra("x", Constants.LATITUDE_DEFAULT))
+        bundle.putDouble("lon", intent.getDoubleExtra("y", Constants.LONGITUDE_DEFAULT))
+        bundle.putString("roadAddr", intent.getStringExtra("roadAddr"))
+        homeFragment.arguments = bundle
 
         transaction = fragmentManager.beginTransaction()
         val frameLayoutId = R.id.frameLayout
@@ -36,25 +52,17 @@ class MainActivity: BaseActivity(TransitionMode.HORIZON) {
             transaction = fragmentManager.beginTransaction()
             when(it.itemId) {
                 homeItem -> transaction.replace(frameLayoutId, homeFragment)
-                    .commitAllowingStateLoss()
+                        .commitAllowingStateLoss()
                 locationSettingItem -> transaction.replace(frameLayoutId, locationSettingFragment)
-                    .commitAllowingStateLoss()
+                        .commitAllowingStateLoss()
                 eatHistoryItem -> transaction.replace(frameLayoutId, historyFragment)
-                    .commitAllowingStateLoss()
+                        .commitAllowingStateLoss()
                 appTalkItem -> transaction.replace(frameLayoutId, appTalkFragment)
-                    .commitAllowingStateLoss()
+                        .commitAllowingStateLoss()
                 myMenuItem -> transaction.replace(frameLayoutId, myMenuFragment)
-                    .commitAllowingStateLoss()
+                        .commitAllowingStateLoss()
             }
             true
         }
-    }
-
-    private fun setupFragments() {
-        homeFragment = HomeFragment()
-        locationSettingFragment = LocationSettingFragment()
-        historyFragment = HistoryFragment()
-        appTalkFragment = AppTalkFragment()
-        myMenuFragment = MyMenuFragment()
     }
 }
