@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.ColorDrawable
 import android.view.WindowManager
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -14,6 +14,7 @@ import com.kakao.sdk.common.KakaoSdk
 import com.lunchfood.R
 import com.lunchfood.ui.main.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.dialog_loading.*
+
 
 class GlobalApplication: Application() {
     companion object {
@@ -44,15 +45,23 @@ class GlobalApplication: Application() {
             return;
         }
 
+        // 현재 디바이스 width, height 얻어올 때 사용
+        val displayMetrics = applicationContext.resources.displayMetrics
         loadingDialog = AppCompatDialog(activity)
-        loadingDialog?.setCancelable(false)
-        loadingDialog?.window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
-        loadingDialog?.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        loadingDialog?.setContentView(R.layout.dialog_loading)
-        loadingDialog?.show()
+        loadingDialog?.let {
+            it.setCancelable(false)
+            it.setContentView(R.layout.dialog_loading)
+            it.show()
+            it.window?.let { w ->
+                w.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+                w.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                w.findViewById<RelativeLayout>(R.id.loading_frame_container).layoutParams.let { params ->
+                    params.height = displayMetrics.heightPixels
+                    params.width = displayMetrics.widthPixels
+                }
+            }
 
-        val loadingGif = loadingDialog?.ivLoadingGif
-        if (loadingGif != null) {
+            val loadingGif = it.ivLoadingGif
             Glide.with(this)
                 .asGif()
                 .load(R.raw.loading)

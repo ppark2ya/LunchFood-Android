@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.lunchfood.R
 import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.api.RetrofitBuilder
+import com.lunchfood.ui.main.view.MainActivity
 import com.lunchfood.ui.main.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,7 @@ import kotlin.coroutines.CoroutineContext
 abstract class BaseFragment: Fragment(), CoroutineScope {
     private lateinit var job: Job
     private lateinit var viewModel: MainViewModel
+    lateinit var mainActivity: MainActivity
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -26,6 +28,7 @@ abstract class BaseFragment: Fragment(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         job = Job()
+        mainActivity = activity as MainActivity
         setupViewModel()
     }
 
@@ -41,17 +44,5 @@ abstract class BaseFragment: Fragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
-    }
-
-    fun loadingStart() {
-        launch {
-            GlobalApplication.instance.loadingStart(activity)
-        }
-    }
-
-    fun loadingEnd() {
-        launch {
-            GlobalApplication.instance.loadingEnd()
-        }
     }
 }

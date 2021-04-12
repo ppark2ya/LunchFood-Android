@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import com.lunchfood.R
+import com.lunchfood.data.model.BestMenu
 import com.lunchfood.data.model.BestMenuRequest
 import com.lunchfood.ui.base.BaseFragment
 import com.lunchfood.ui.base.GlobalApplication
@@ -16,12 +18,13 @@ import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.PreferenceManager
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.android.synthetic.main.header.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
-class HomeFragment: BaseFragment(), View.OnClickListener {
+class HomeFragment: BaseFragment() {
 
     private lateinit var homeView: View
     private lateinit var mMapView: MapView
@@ -33,6 +36,10 @@ class HomeFragment: BaseFragment(), View.OnClickListener {
     private var x: Double = 0.0          // 사용자 x좌표
     private var y: Double = 0.0          // 사용자 y좌표
     private lateinit var roadAddr: String   // 사용자 설정 주소
+    private lateinit var bestMenuList: List<BestMenu>
+    private var mSize = 0   // 추천 식당 전체 개수
+    private var mNextIndex = 0
+    private var prevMarker: MapPOIItem? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,33 +60,54 @@ class HomeFragment: BaseFragment(), View.OnClickListener {
             roadAddr = extra.getString("roadAddr", "")
         }
 
+        setupEventListener()
+
         return homeView
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         headerBackBtn.visibility = View.GONE
+        mNextIndex = 0
         val userId = PreferenceManager.getLong("userId")
         getBestMenuList(BestMenuRequest(id = userId, x.toString(), y.toString()))
     }
 
+    private fun setupEventListener() {
+        homeView.findViewById<CardView>(R.id.nextPlace).setOnClickListener {
+            if(mSize > mNextIndex) {
+                showRestaurant()
+            }
+        }
+
+        homeView.findViewById<CardView>(R.id.lunchChoice).setOnClickListener {
+            Dlog.i("click!!!!!!!")
+        }
+    }
+
     private fun setRestaurantLocation() {
+        if(prevMarker != null) {
+            mMapView.removePOIItem(prevMarker)
+        }
+
         val userNowLocation = MapPoint.mapPointWithGeoCoord(mLat, mLon)
         mMapView.setMapCenterPoint(userNowLocation, true)
 
-        val marker = MapPOIItem()
-        marker.itemName = mAddress
-        marker.tag = 0
-        marker.mapPoint = userNowLocation
-        marker.markerType = MapPOIItem.MarkerType.CustomImage
-        marker.customImageBitmap = BitmapFactory.decodeResource(resources, R.drawable.gps_img).let {
-            Bitmap.createScaledBitmap(
+        prevMarker = MapPOIItem()
+        prevMarker?.let { marker ->
+            marker.itemName = mAddress
+            marker.tag = 0
+            marker.mapPoint = userNowLocation
+            marker.markerType = MapPOIItem.MarkerType.CustomImage
+            marker.customImageBitmap = BitmapFactory.decodeResource(resources, R.drawable.gps_img).let {
+                Bitmap.createScaledBitmap(
                     it, 80, 90, false
-            )
+                )
+            }
+            marker.isCustomImageAutoscale = false
+            marker.setCustomImageAnchor(0.5f, 1.0f)
+            mMapView.addPOIItem(prevMarker)
         }
-        marker.isCustomImageAutoscale = false
-        marker.setCustomImageAnchor(0.5f, 1.0f)
-        mMapView.addPOIItem(marker)
 
         tvRestaurantTitleName.text = mRestourant
         tvRestaurantName.text = mAddress
@@ -87,29 +115,25 @@ class HomeFragment: BaseFragment(), View.OnClickListener {
     }
 
     private fun getBestMenuList(data: BestMenuRequest) {
-        GlobalApplication.getViewModel()!!.getBestMenuList(data).observe(this, {
+        GlobalApplication.getViewModel()!!.getBestMenuList(data).observe(viewLifecycleOwner, {
             it?.let { resource ->
                 when(resource.status) {
                     Status.PENDING -> {
-                        loadingStart()
+                        mainActivity.loadingStart()
                     }
                     Status.SUCCESS -> {
-                        loadingEnd()
+                        mainActivity.loadingEnd()
                         resource.data?.let { res ->
                             if(res.resultCode == 200) {
-                                val bestMenuList = res.data!!
+                                bestMenuList = res.data!!
+                                mSize = bestMenuList.size
                                 Dlog.i("메뉴목록 데이터::: $bestMenuList")
-                                mLat = bestMenuList[0].lat
-                                mLon = bestMenuList[0].lon
-                                mAddress = bestMenuList[0].addressName
-                                mDistance = bestMenuList[0].distance
-                                mRestourant = bestMenuList[0].placeName
-                                setRestaurantLocation()
+                                showRestaurant()
                             }
                         }
                     }
                     Status.FAILURE -> {
-                        loadingEnd()
+                        mainActivity.loadingEnd()
                         Dlog.e("getBestMenuList FAILURE : ${it.message}")
                     }
                 }
@@ -117,11 +141,13 @@ class HomeFragment: BaseFragment(), View.OnClickListener {
         })
     }
 
-    override fun onClick(v: View?) {
-        when(v?.id) {
-            R.id.nextPlace -> {
-                Toast.makeText(activity, "asdad", Toast.LENGTH_SHORT)
-            }
-        }
+    private fun showRestaurant() {
+        mLat = bestMenuList[mNextIndex].lat
+        mLon = bestMenuList[mNextIndex].lon
+        mAddress = bestMenuList[mNextIndex].addressName
+        mDistance = bestMenuList[mNextIndex].distance
+        mRestourant = bestMenuList[mNextIndex].placeName
+        mNextIndex++
+        setRestaurantLocation()
     }
 }
