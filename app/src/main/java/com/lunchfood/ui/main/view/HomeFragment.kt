@@ -11,6 +11,7 @@ import androidx.cardview.widget.CardView
 import com.lunchfood.R
 import com.lunchfood.data.model.BestMenu
 import com.lunchfood.data.model.BestMenuRequest
+import com.lunchfood.data.model.HistoryRequest
 import com.lunchfood.ui.base.BaseFragment
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.utils.Constants
@@ -28,15 +29,16 @@ class HomeFragment: BaseFragment() {
 
     private lateinit var homeView: View
     private lateinit var mMapView: MapView
-    private var mLat: Double = Constants.LATITUDE_DEFAULT   // 가게 x좌표
-    private var mLon: Double = Constants.LONGITUDE_DEFAULT  // 가게 y좌표
+    private var mLat: Double = Constants.LATITUDE_DEFAULT   // 가게 y좌표
+    private var mLon: Double = Constants.LONGITUDE_DEFAULT  // 가게 x좌표
     private var mAddress: String = ""       // 가게 주소(도로명)
     private var mDistance: String = ""       // 가게까지 거리
-    private var mRestourant: String = ""     // 가게명
+    private var mRestaurant: String = ""     // 가게명
     private var x: Double = 0.0          // 사용자 x좌표
     private var y: Double = 0.0          // 사용자 y좌표
     private lateinit var roadAddr: String   // 사용자 설정 주소
     private lateinit var bestMenuList: List<BestMenu>
+    private lateinit var mCurrentItem: BestMenu
     private var mSize = 0   // 추천 식당 전체 개수
     private var mNextIndex = 0
     private var prevMarker: MapPOIItem? = null
@@ -49,7 +51,7 @@ class HomeFragment: BaseFragment() {
         homeView = inflater.inflate(R.layout.fragment_home, container, false)
 
         mMapView = MapView(activity)
-        mMapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+        // mMapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
 
         val mapViewContainer = homeView.findViewById<ViewGroup>(R.id.rlMainMapView)
         mapViewContainer.addView(mMapView)
@@ -69,19 +71,16 @@ class HomeFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         headerBackBtn.visibility = View.GONE
         mNextIndex = 0
-        val userId = PreferenceManager.getLong("userId")
         getBestMenuList(BestMenuRequest(id = userId, x.toString(), y.toString()))
     }
 
     private fun setupEventListener() {
         homeView.findViewById<CardView>(R.id.nextPlace).setOnClickListener {
-            if(mSize > mNextIndex) {
-                showRestaurant()
-            }
+            insertHistory(makeRequestBody(0))
         }
 
         homeView.findViewById<CardView>(R.id.lunchChoice).setOnClickListener {
-            Dlog.i("click!!!!!!!")
+            insertHistory(makeRequestBody(1))
         }
     }
 
@@ -109,7 +108,7 @@ class HomeFragment: BaseFragment() {
             mMapView.addPOIItem(prevMarker)
         }
 
-        tvRestaurantTitleName.text = mRestourant
+        tvRestaurantTitleName.text = mRestaurant
         tvRestaurantName.text = mAddress
         "${mDistance}m".also { tvRestaurantDistance.text = it }
     }
@@ -142,12 +141,52 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun showRestaurant() {
+        mCurrentItem = bestMenuList[mNextIndex]
         mLat = bestMenuList[mNextIndex].lat
         mLon = bestMenuList[mNextIndex].lon
         mAddress = bestMenuList[mNextIndex].addressName
         mDistance = bestMenuList[mNextIndex].distance
-        mRestourant = bestMenuList[mNextIndex].placeName
+        mRestaurant = bestMenuList[mNextIndex].placeName
         mNextIndex++
         setRestaurantLocation()
+    }
+
+    private fun makeRequestBody(goodBad: Int): HistoryRequest {
+        return HistoryRequest(
+            id = userId,
+            place_id = mCurrentItem.placeId,
+            place_name = mCurrentItem.placeName,
+            category_name = mCurrentItem.categoryName,
+            good_bad = goodBad,
+            x = mCurrentItem.lon.toString(),
+            y = mCurrentItem.lat.toString()
+        )
+    }
+
+    private fun insertHistory(data: HistoryRequest) {
+        GlobalApplication.getViewModel()!!.insertHistory(data).observe(viewLifecycleOwner, {
+            it?.let { resource ->
+                when(resource.status) {
+                    Status.PENDING -> {
+                        mainActivity.loadingStart()
+                    }
+                    Status.SUCCESS -> {
+                        mainActivity.loadingEnd()
+                        resource.data?.let { res ->
+                            if(res.resultCode == 200) {
+                                if(mSize > mNextIndex) {
+                                    // TODO: 선택했을 때 시나리오 필요할 듯
+                                    showRestaurant()
+                                }
+                            }
+                        }
+                    }
+                    Status.FAILURE -> {
+                        mainActivity.loadingEnd()
+                        Dlog.e("insertHistory FAILURE : ${it.message}")
+                    }
+                }
+            }
+        })
     }
 }

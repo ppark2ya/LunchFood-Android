@@ -11,6 +11,7 @@ import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.api.RetrofitBuilder
 import com.lunchfood.ui.main.view.MainActivity
 import com.lunchfood.ui.main.viewmodel.MainViewModel
+import com.lunchfood.utils.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,6 +22,7 @@ abstract class BaseFragment: Fragment(), CoroutineScope {
     private lateinit var job: Job
     private lateinit var viewModel: MainViewModel
     lateinit var mainActivity: MainActivity
+    var userId = -1L
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -29,6 +31,7 @@ abstract class BaseFragment: Fragment(), CoroutineScope {
         super.onCreate(savedInstanceState)
         job = Job()
         mainActivity = activity as MainActivity
+        userId = PreferenceManager.getLong("userId")
         setupViewModel()
     }
 

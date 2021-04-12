@@ -61,4 +61,18 @@ interface ApiService {
      */
     @POST("/recommend/best_menu")
     suspend fun getBestMenuList(@Body data: BestMenuRequest): RetrofitResponse<List<BestMenu>>
+
+    /**
+     * @param id: 사용자 ID
+     * @param place_id: 식당 식별자
+     * @param place_name: 식당명
+     * @param category_name: 식당종류
+     * @param good_bad: 선택: 1, 거절: 0
+     * @param x: lon
+     * @param y: lat
+     * @param interval_date
+     * @desc 추천 메뉴 선택 혹은 거절 했을 때 log 입력
+     */
+    @POST("/history/insert_history")
+    suspend fun insertHistory(@Body data: HistoryRequest): RetrofitResponse<Any>
 }

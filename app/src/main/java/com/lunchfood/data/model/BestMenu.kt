@@ -1,6 +1,5 @@
 package com.lunchfood.data.model
 
-import com.google.gson.annotations.SerializedName
 import com.lunchfood.utils.Constants.Companion.INTERVAL_DATE
 import com.squareup.moshi.Json
 
@@ -21,7 +20,8 @@ data class BestMenu(
     @Json(name = "category_name")
     val categoryName: String,
     val distance: String,
-    val id: String,
+    @Json(name = "id")
+    val placeId: String,
     val phone: String,
     @Json(name = "place_name")
     val placeName: String,

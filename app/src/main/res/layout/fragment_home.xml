@@ -20,12 +20,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingHorizontal="15dp"
-            android:paddingVertical="25dp">
+            android:paddingVertical="15dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight=".65"
+                android:layout_weight=".6"
                 android:background="#F4F4F4"
                 android:orientation="vertical">
                 <RelativeLayout
@@ -47,7 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="15dp"
                         android:layout_marginBottom="10dp"
                         app:srcCompat="@drawable/ic_today_lunch_customize" />
 
@@ -66,7 +66,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight=".35"
+                android:layout_weight=".4"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -108,7 +108,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="70dp"
                     android:orientation="horizontal">
                     <androidx.cardview.widget.CardView
                         android:id="@+id/nextPlace"

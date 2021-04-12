@@ -12,4 +12,5 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun getAddressList(addressParam: HashMap<String, Any>) = koroadService.getAddressList(addressParam)
     suspend fun getAddressCoord(addressParam: HashMap<String, Any>) = koroadService.getAddressCoord(addressParam)
     suspend fun getBestMenuList(data: BestMenuRequest) = apiService.getBestMenuList(data)
+    suspend fun insertHistory(data: HistoryRequest) = apiService.insertHistory(data)
 }
