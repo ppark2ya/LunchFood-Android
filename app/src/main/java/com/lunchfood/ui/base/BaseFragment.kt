@@ -20,7 +20,6 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class BaseFragment: Fragment(), CoroutineScope {
     private lateinit var job: Job
-    private lateinit var viewModel: MainViewModel
     lateinit var mainActivity: MainActivity
     var userId = -1L
 
@@ -32,16 +31,6 @@ abstract class BaseFragment: Fragment(), CoroutineScope {
         job = Job()
         mainActivity = activity as MainActivity
         userId = PreferenceManager.getLong("userId")
-        setupViewModel()
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
-        ).get(MainViewModel::class.java)
-        // 현재 뷰에 대한 viewModel 전역상태로 관리
-        GlobalApplication.setViewModel(viewModel)
     }
 
     override fun onDestroy() {

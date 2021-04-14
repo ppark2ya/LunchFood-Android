@@ -31,8 +31,16 @@
             android:layout_width="319dp"
             android:layout_height="280dp"
             android:layout_gravity="center"
-            android:layout_margin="50dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="15dp"
             app:srcCompat="@drawable/login_foods" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="50dp"
+            app:srcCompat="@drawable/license_freepik_customize" />
 
         <ImageButton
             android:id="@+id/kakaoLoginBtn"
