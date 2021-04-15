@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.cardview.widget.CardView
 import com.lunchfood.R
 import com.lunchfood.data.model.BestMenu
@@ -16,10 +15,8 @@ import com.lunchfood.ui.base.BaseFragment
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.utils.Constants
 import com.lunchfood.utils.Dlog
-import com.lunchfood.utils.PreferenceManager
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.android.synthetic.main.header.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
@@ -154,10 +151,10 @@ class HomeFragment: BaseFragment() {
     private fun makeRequestBody(goodBad: Int): HistoryRequest {
         return HistoryRequest(
             id = userId,
-            place_id = mCurrentItem.placeId,
-            place_name = mCurrentItem.placeName,
-            category_name = mCurrentItem.categoryName,
-            good_bad = goodBad,
+            placeId = mCurrentItem.placeId,
+            placeName = mCurrentItem.placeName,
+            categoryName = mCurrentItem.categoryName,
+            goodBad = goodBad,
             x = mCurrentItem.lon.toString(),
             y = mCurrentItem.lat.toString()
         )

@@ -71,4 +71,13 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
             emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
+
+    fun getPlaceHistory(data: HistoryParam) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.getPlaceHistory(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
 }

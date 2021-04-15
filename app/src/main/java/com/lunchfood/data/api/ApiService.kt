@@ -75,4 +75,12 @@ interface ApiService {
      */
     @POST("/history/insert_history")
     suspend fun insertHistory(@Body data: HistoryRequest): RetrofitResponse<Any>
+
+    /**
+     * @param id: 사용자 ID
+     * @param interval_date
+     * @desc 최근 선택한 음식점 히스토리 반환
+     */
+    @POST("/history/get_place_history")
+    suspend fun getPlaceHistory(@Body data: HistoryParam): RetrofitResponse<HistoryResponse>
 }

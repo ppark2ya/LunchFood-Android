@@ -27,6 +27,7 @@ class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
                 when(resource.status) {
                     Status.PENDING -> {}
                     Status.SUCCESS -> {
+                        loadingEnd()
                         resource.data?.let { res ->
                             if(res.resultCode == 200) {
                                 val intent = Intent(this, MainActivity::class.java)
@@ -48,10 +49,5 @@ class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
                 }
             }
         })
-    }
-
-    override fun onStop() {
-        super.onStop()
-        loadingEnd()
     }
 }

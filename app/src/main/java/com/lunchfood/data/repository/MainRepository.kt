@@ -12,4 +12,5 @@ class MainRepository(private val apiHelper: ApiHelper) {
     suspend fun getAddressCoord(addressParam: HashMap<String, Any>) = apiHelper.getAddressCoord(addressParam)
     suspend fun getBestMenuList(data: BestMenuRequest) = apiHelper.getBestMenuList(data)
     suspend fun insertHistory(data: HistoryRequest) = apiHelper.insertHistory(data)
+    suspend fun getPlaceHistory(data: HistoryParam) = apiHelper.getPlaceHistory(data)
 }
