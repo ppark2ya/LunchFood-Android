@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.lunchfood"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -90,4 +90,6 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     kapt 'com.github.bumptech.glide:compiler:4.12.0'
+
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.1.1'
 }
