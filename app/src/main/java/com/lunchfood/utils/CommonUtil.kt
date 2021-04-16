@@ -35,5 +35,9 @@ class CommonUtil {
             }
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
+
+        fun nvl(value: String?, default: String): String {
+            return value ?: default
+        }
     }
 }

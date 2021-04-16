@@ -82,5 +82,5 @@ interface ApiService {
      * @desc 최근 선택한 음식점 히스토리 반환
      */
     @POST("/history/get_place_history")
-    suspend fun getPlaceHistory(@Body data: HistoryParam): RetrofitResponse<HistoryResponse>
+    suspend fun getPlaceHistory(@Body data: HistoryParam): RetrofitResponse<List<HistoryResponse>>
 }

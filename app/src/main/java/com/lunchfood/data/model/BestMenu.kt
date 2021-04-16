@@ -1,5 +1,6 @@
 package com.lunchfood.data.model
 
+import com.lunchfood.utils.Constants.Companion.DEFAULT_USER_RADIUS
 import com.lunchfood.utils.Constants.Companion.INTERVAL_DATE
 import com.squareup.moshi.Json
 
@@ -7,7 +8,9 @@ data class BestMenuRequest(
     val id: Long,
     val x: String,
     val y: String,
-    val interval_date: Int = INTERVAL_DATE
+    val radius: Int = DEFAULT_USER_RADIUS,
+    @Json(name = "interval_date")
+    val intervalDate: Int = INTERVAL_DATE
 )
 
 data class BestMenu(
