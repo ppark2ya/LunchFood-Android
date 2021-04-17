@@ -31,8 +31,8 @@ class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
                         resource.data?.let { res ->
                             if(res.resultCode == 200) {
                                 val intent = Intent(this, MainActivity::class.java)
-                                intent.putExtra("lon", res.data!!.x!!.toDouble())   // 경도
-                                intent.putExtra("lat", res.data.y!!.toDouble())  // 위도
+                                intent.putExtra("lon", res.data!!.lon!!.toDouble())   // 경도
+                                intent.putExtra("lat", res.data.lat!!.toDouble())  // 위도
                                 intent.putExtra("roadAddr", res.data.address)   // 주소
                                 // 1번 호출 후 스택에서 제거해서 뒤로가기 방지
                                 startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))

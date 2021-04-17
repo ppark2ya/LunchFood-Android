@@ -246,12 +246,12 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
                                 val addressCoord = res.results.juso
 
                                 if (addressCommonResult.errorCode == "0") {
-                                    if (addressCoord != null) {
+                                    addressCoord?.let {
                                         val coordItem = addressCoord[0]
                                         val userId = PreferenceManager.getLong("userId")
                                         val roadAddr = addressParam["roadAddr"]
                                         updateLocation(
-                                            User(id = userId, x = coordItem.entX, y = coordItem.entY, address = roadAddr.toString(), type = "UTMK")
+                                            User(id = userId, lat = coordItem.entY, lon = coordItem.entX, address = roadAddr.toString(), type = "UTMK")
                                         )
                                     }
                                 }
@@ -280,10 +280,7 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
                         loadingEnd()
                         resource.data?.let { res ->
                             if(res.resultCode == 200) {
-                                val intent = Intent(this, MainActivity::class.java)
-                                intent.putExtra("lon", data.x)   // 경도
-                                intent.putExtra("lat", data.y)  // 위도
-                                intent.putExtra("roadAddr", data.address)   // 주소
+                                val intent = Intent(this, BridgeActivity::class.java)
                                 startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                             } else {
                                 Toast.makeText(this@AddressMappingActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)

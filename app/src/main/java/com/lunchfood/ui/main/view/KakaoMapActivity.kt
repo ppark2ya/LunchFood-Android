@@ -55,7 +55,7 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
         setUserAddrBtn.setOnClickListener {
             val userId = PreferenceManager.getLong("userId")
             updateLocation(
-                User(id = userId, x = mLat.toString(), y = mLon.toString(), address = mAddress, type = "WGS84")
+                User(id = userId, lat = mLat.toString(), lon = mLon.toString(), address = mAddress, type = "WGS84")
             )
         }
     }

@@ -9,11 +9,11 @@ class Constants {
         // 좌표제공 API
         const val OPEN_API_LOCATION_KEY = "U01TX0FVVEgyMDIxMDQxMDIxMzExODExMTAzNDQ="
         // 서울역을 기본 좌표값으로 설정
-        const val LATITUDE_DEFAULT = 127.0556521    // 위도(y) - 적도를 기준으로 얼마나 떨어져 있는지
-        const val LONGITUDE_DEFAULT = 37.5076415    // 경도(x)
+        const val LATITUDE_DEFAULT = 37.5076415
+        const val LONGITUDE_DEFAULT = 127.0556521
         // 며칠 전 메뉴까지 고려해서 추천할 것인지
         const val INTERVAL_DATE = 3
         // 제한 거리 기본 값
-        const val DEFAULT_USER_RADIUS = 2000
+        const val DEFAULT_USER_RADIUS = 1000
     }
 }

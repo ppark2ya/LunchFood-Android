@@ -31,8 +31,8 @@ class HomeFragment: BaseFragment() {
     private var mAddress: String = ""       // 가게 주소(도로명)
     private var mDistance: String = ""       // 가게까지 거리
     private var mRestaurant: String = ""     // 가게명
-    private var x: Double = 0.0          // 사용자 x좌표
-    private var y: Double = 0.0          // 사용자 y좌표
+    private var userLon: Double = 0.0          // 사용자 x좌표
+    private var userLat: Double = 0.0          // 사용자 y좌표
     private lateinit var roadAddr: String   // 사용자 설정 주소
     private lateinit var bestMenuList: List<BestMenu>
     private lateinit var mCurrentItem: BestMenu
@@ -54,11 +54,12 @@ class HomeFragment: BaseFragment() {
         mapViewContainer.addView(mMapView)
         val extra = arguments
         if(extra != null) {
-            x = extra.getDouble("lat")
-            y = extra.getDouble("lon")
+            userLat = extra.getDouble("lat")
+            userLon = extra.getDouble("lon")
             roadAddr = extra.getString("roadAddr", "")
         }
 
+        setUserLocation()
         setupEventListener()
 
         return homeView
@@ -68,7 +69,7 @@ class HomeFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         headerBackBtn.visibility = View.GONE
         mNextIndex = 0
-        getBestMenuList(BestMenuRequest(id = userId, x.toString(), y.toString()))
+        getBestMenuList(BestMenuRequest(id = userId, lon = userLon.toString(), lat = userLat.toString()))
     }
 
     private fun setupEventListener() {
@@ -78,6 +79,25 @@ class HomeFragment: BaseFragment() {
 
         homeView.findViewById<CardView>(R.id.lunchChoice).setOnClickListener {
             insertHistory(makeRequestBody(1))
+        }
+    }
+
+    private fun setUserLocation() {
+        val userNowLocation = MapPoint.mapPointWithGeoCoord(userLat, userLon)
+
+        MapPOIItem().let { userMarker ->
+            userMarker.itemName = roadAddr
+            userMarker.tag = 1
+            userMarker.mapPoint = userNowLocation
+            userMarker.markerType = MapPOIItem.MarkerType.CustomImage
+            userMarker.customImageBitmap = BitmapFactory.decodeResource(resources, R.drawable.gps_img_red).let {
+                Bitmap.createScaledBitmap(
+                    it, 80, 90, false
+                )
+            }
+            userMarker.isCustomImageAutoscale = false
+            userMarker.setCustomImageAnchor(0.5f, 1.0f)
+            mMapView.addPOIItem(userMarker)
         }
     }
 

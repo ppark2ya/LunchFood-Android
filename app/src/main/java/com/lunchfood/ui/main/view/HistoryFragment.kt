@@ -39,13 +39,21 @@ class HistoryFragment: BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getPlaceHistory(HistoryParam(id = userId, year = "2021", month = "04", intervalDate = 0))
+        materialCalendarView = historyView.findViewById(R.id.calendarView)
+
+        val now = CalendarDay.today()
+        materialCalendarView.selectedDate = now
+        getPlaceHistory(
+            HistoryParam(
+                id = userId,
+                year = now.year.toString(),
+                month = now.month.toString(),
+                intervalDate = 0
+            )
+        )
     }
 
     private fun setupCalendarView() {
-        materialCalendarView = historyView.findViewById(R.id.calendarView)
-        materialCalendarView.selectedDate = CalendarDay.today()
-
         val list = mutableListOf(SaturdayDecorator(), SundayDecorator())
         mCalendarDataList?.let {
             for(hist in it) {
@@ -72,7 +80,7 @@ class HistoryFragment: BaseFragment() {
                         mainActivity.loadingEnd()
                         resource.data?.let { res ->
                             if(res.resultCode == 200) {
-                                mCalendarDataList = res.data
+                                mCalendarDataList = res.data as List<HistoryResponse>
                                 setupCalendarView()
                             }
                         }

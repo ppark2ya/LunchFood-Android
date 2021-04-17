@@ -38,7 +38,7 @@ class BridgeActivity: BaseActivity(TransitionMode.HORIZON) {
                                 val user = res.data
                                 launch {
                                     delay(1000)
-                                    forwardMainPage(user!!.x!!, user.y!!, user.address!!)
+                                    forwardMainPage(user!!.lat!!, user.lon!!, user.address!!)
                                 }
                             } else {
                                 val intent = Intent(this, KakaoLoginActivity::class.java)
@@ -55,10 +55,10 @@ class BridgeActivity: BaseActivity(TransitionMode.HORIZON) {
         })
     }
 
-    private fun forwardMainPage(x: String, y: String, address: String) {
+    private fun forwardMainPage(lat: String, lon: String, address: String) {
         val intent = Intent(this@BridgeActivity, MainActivity::class.java)
-        intent.putExtra("lon", x)   // 경도
-        intent.putExtra("lat", y)  // 위도
+        intent.putExtra("lon", lon.toDouble())   // 경도
+        intent.putExtra("lat", lat.toDouble())  // 위도
         intent.putExtra("roadAddr", address)   // 도로명 주소
         startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }
