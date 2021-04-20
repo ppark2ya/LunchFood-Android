@@ -6,11 +6,6 @@ import com.squareup.moshi.Json
 
 data class BestMenuRequest(
     val id: Long,
-    @Json(name = "x")
-    val lon: String,
-    @Json(name = "y")
-    val lat: String,
-    val radius: Int = DEFAULT_USER_RADIUS,
     @Json(name = "interval_date")
     val intervalDate: Int = INTERVAL_DATE
 )

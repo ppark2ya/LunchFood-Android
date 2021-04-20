@@ -13,8 +13,10 @@ data class HistoryRequest(
     val categoryName: String,  // 식당종류
     @Json(name = "good_bad")
     val goodBad: Int,          // 선택:1, 거절:0
-    val x: String,      // lon
-    val y: String,      // lat
+    @Json(name = "x")
+    val lon: String,      // lon
+    @Json(name = "y")
+    val lat: String,      // lat
     @Json(name = "interval_date")
     val intervalDate: Int? = INTERVAL_DATE
 )

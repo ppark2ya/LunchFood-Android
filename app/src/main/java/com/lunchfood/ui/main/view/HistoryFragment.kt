@@ -51,6 +51,7 @@ class HistoryFragment: BaseFragment() {
                 intervalDate = 0
             )
         )
+        setupCalendarEventListener()
     }
 
     private fun setupCalendarView() {
@@ -92,5 +93,28 @@ class HistoryFragment: BaseFragment() {
                 }
             }
         })
+    }
+
+    private fun setupCalendarEventListener() {
+        // 날짜 선택 시 이벤트
+        materialCalendarView.setOnDateChangedListener { widget, date, selected ->
+            val year = date.year
+            val month = date.month
+            val day = date.day
+
+            Dlog.i("연: $year, 월: $month, 일: $day")
+        }
+
+        // 달력 넘어갈 때 이벤트
+        materialCalendarView.setOnMonthChangedListener { widget, date ->
+            getPlaceHistory(
+                HistoryParam(
+                    id = userId,
+                    year = date.year.toString(),
+                    month = date.month.toString(),
+                    intervalDate = 0
+                )
+            )
+        }
     }
 }

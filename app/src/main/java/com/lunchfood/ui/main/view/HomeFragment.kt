@@ -69,7 +69,7 @@ class HomeFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         headerBackBtn.visibility = View.GONE
         mNextIndex = 0
-        getBestMenuList(BestMenuRequest(id = userId, lon = userLon.toString(), lat = userLat.toString()))
+        getBestMenuList(BestMenuRequest(id = userId))
     }
 
     private fun setupEventListener() {
@@ -175,8 +175,8 @@ class HomeFragment: BaseFragment() {
             placeName = mCurrentItem.placeName,
             categoryName = mCurrentItem.categoryName,
             goodBad = goodBad,
-            x = mCurrentItem.lon.toString(),
-            y = mCurrentItem.lat.toString()
+            lon = mCurrentItem.lon.toString(),
+            lat = mCurrentItem.lat.toString()
         )
     }
 
