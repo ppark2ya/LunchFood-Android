@@ -47,7 +47,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight=".80"
-                        android:background="@drawable/et_rounded_corner_rect"
+                        android:background="@drawable/et_rounded_corner_rect_bggray"
                         android:hint="@string/address_placeholder"
                         android:padding="10dp"
                         android:layout_marginRight="10dp"

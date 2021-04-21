@@ -22,4 +22,6 @@
     <string name="distance">거리</string>
     <string name="another_menu">다른 추천</string>
     <string name="choice">선택</string>
+    <string name="day_menu_regist">데이메뉴 등록</string>
+    <string name="menu_history">식사기록</string>
 </resources>

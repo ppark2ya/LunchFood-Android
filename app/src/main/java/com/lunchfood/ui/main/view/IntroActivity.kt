@@ -17,7 +17,6 @@ class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
         setContentView(R.layout.activity_intro)
 
         loadingStart()
-        val userId = PreferenceManager.getLong("userId")
         getAccount(User(userId))
     }
 

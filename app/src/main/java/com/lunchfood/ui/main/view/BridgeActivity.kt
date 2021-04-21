@@ -22,8 +22,6 @@ class BridgeActivity: BaseActivity(TransitionMode.HORIZON) {
 
     override fun onResume() {
         super.onResume()
-
-        val userId = PreferenceManager.getLong("userId")
         getAccount(User(userId))
     }
 

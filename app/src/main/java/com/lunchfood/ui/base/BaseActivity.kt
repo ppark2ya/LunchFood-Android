@@ -1,15 +1,22 @@
 package com.lunchfood.ui.base
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.ViewModelProvider
 import com.lunchfood.R
 import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.api.RetrofitBuilder
 import com.lunchfood.ui.main.viewmodel.MainViewModel
+import com.lunchfood.utils.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,6 +33,7 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
 
     private lateinit var job: Job
     private lateinit var viewModel: MainViewModel
+    val userId by lazy { PreferenceManager.getLong("userId") }
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -106,5 +114,25 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
         launch {
             GlobalApplication.instance.loadingEnd()
         }
+    }
+
+    // 상단 메뉴명을 텍스트뷰로 사용할 때 param 값으로 세팅
+    fun setCommonHeaderText(text: String, view: View = window.decorView) {
+        val ivHeader = view.findViewById<ImageView>(R.id.ivHeader)
+        ivHeader.visibility = View.GONE
+
+        val layout = view.findViewById<RelativeLayout>(R.id.rlCommonHeader)
+        val layoutParams = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT
+        )
+        val tvHeader = AppCompatTextView(this)
+        tvHeader.text = text
+        tvHeader.layoutParams = layoutParams
+        tvHeader.gravity = Gravity.CENTER
+        tvHeader.setTextColor(Color.BLACK)
+        tvHeader.textSize = 18f
+        tvHeader.typeface = Typeface.DEFAULT_BOLD
+        layout.addView(tvHeader)
     }
 }

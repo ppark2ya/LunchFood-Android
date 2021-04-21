@@ -45,6 +45,11 @@ class GlobalApplication: Application() {
             return;
         }
 
+        // 로딩화면이 여러개 생성되는 것 방지
+        if(loadingDialog != null && loadingDialog?.isShowing == true) {
+            return;
+        }
+
         // 현재 디바이스 width, height 얻어올 때 사용
         val displayMetrics = applicationContext.resources.displayMetrics
         loadingDialog = AppCompatDialog(activity)
@@ -71,10 +76,7 @@ class GlobalApplication: Application() {
     }
 
     fun loadingEnd() {
-        if (loadingDialog != null && loadingDialog?.isShowing == true) {
-            loadingDialog?.dismiss();
-        }
-
+        loadingDialog?.dismiss()
     }
 
     val context: Context

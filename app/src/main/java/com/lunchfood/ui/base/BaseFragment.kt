@@ -21,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
 abstract class BaseFragment: Fragment(), CoroutineScope {
     private lateinit var job: Job
     lateinit var mainActivity: MainActivity
-    var userId = -1L
+    val userId by lazy { PreferenceManager.getLong("userId") }
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -30,7 +30,6 @@ abstract class BaseFragment: Fragment(), CoroutineScope {
         super.onCreate(savedInstanceState)
         job = Job()
         mainActivity = activity as MainActivity
-        userId = PreferenceManager.getLong("userId")
     }
 
     override fun onDestroy() {

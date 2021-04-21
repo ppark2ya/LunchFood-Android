@@ -248,7 +248,6 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
                                 if (addressCommonResult.errorCode == "0") {
                                     addressCoord?.let {
                                         val coordItem = addressCoord[0]
-                                        val userId = PreferenceManager.getLong("userId")
                                         val roadAddr = addressParam["roadAddr"]
                                         updateLocation(
                                             User(id = userId, lat = coordItem.entY, lon = coordItem.entX, address = roadAddr.toString(), type = "UTMK")

@@ -1,24 +1,21 @@
 package com.lunchfood.ui.main.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.lunchfood.R
 import com.lunchfood.data.model.HistoryParam
-import com.lunchfood.data.model.HistoryRequest
 import com.lunchfood.data.model.HistoryResponse
 import com.lunchfood.ui.base.BaseFragment
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.ui.main.view.calendar.HistoryDecorator
 import com.lunchfood.ui.main.view.calendar.SaturdayDecorator
 import com.lunchfood.ui.main.view.calendar.SundayDecorator
-import com.lunchfood.utils.Constants
 import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.Status
 import com.prolificinteractive.materialcalendarview.CalendarDay
-import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import org.threeten.bp.LocalDate
 
@@ -34,12 +31,8 @@ class HistoryFragment: BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         historyView = inflater.inflate(R.layout.fragment_history, container, false)
-        return historyView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         materialCalendarView = historyView.findViewById(R.id.calendarView)
+        mainActivity.run { setCommonHeaderText(getString(R.string.menu_history), historyView) }
 
         val now = CalendarDay.today()
         materialCalendarView.selectedDate = now
@@ -52,18 +45,15 @@ class HistoryFragment: BaseFragment() {
             )
         )
         setupCalendarEventListener()
+
+        return historyView
     }
 
     private fun setupCalendarView() {
         val list = mutableListOf(SaturdayDecorator(), SundayDecorator())
-        mCalendarDataList?.let {
-            for(hist in it) {
-                val yyyy = hist.insertedDate.substring(0, 4)
-                val mm = hist.insertedDate.substring(5, 7)
-                val dd = hist.insertedDate.substring(8, 10)
-                val date = CalendarDay.from(yyyy.toInt(), mm.toInt(), dd.toInt())
-                list.add(HistoryDecorator(date, hist.placeName))
-            }
+        mCalendarDataList?.forEach { hist ->
+            val date = CalendarDay.from(LocalDate.parse(hist.insertedDate))
+            list.add(HistoryDecorator(date, hist.placeName))
         }
 
         materialCalendarView.addDecorators(list)
@@ -98,11 +88,16 @@ class HistoryFragment: BaseFragment() {
     private fun setupCalendarEventListener() {
         // 날짜 선택 시 이벤트
         materialCalendarView.setOnDateChangedListener { widget, date, selected ->
-            val year = date.year
-            val month = date.month
-            val day = date.day
+            val selectedDate = date.date.toString()
+            val dayMenu = mCalendarDataList?.filter {
+                it.insertedDate == selectedDate
+            }
 
-            Dlog.i("연: $year, 월: $month, 일: $day")
+            if(!dayMenu.isNullOrEmpty()) {
+                val intent = Intent(mainActivity, MenuRegistActivity::class.java)
+                intent.putExtra("dayMenu", dayMenu[0])
+                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            }
         }
 
         // 달력 넘어갈 때 이벤트
