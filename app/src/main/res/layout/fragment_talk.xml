@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="TALK" />
+            android:text="오픈준비 중 입니다" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

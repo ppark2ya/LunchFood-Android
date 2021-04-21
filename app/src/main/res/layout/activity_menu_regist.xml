@@ -10,78 +10,231 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="30dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvCurrentDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/lunch_red"
-            android:textStyle="bold"
-            android:text="2021년 4월 21일의 메뉴" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/et_rounded_corner_rect_bgwhite"
-            android:drawableEnd="@drawable/ic_image_upload"
-            android:padding="10dp" />
-
+        android:layout_marginTop="60dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="30dp"
+            android:paddingTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvCurrentDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/lunch_red"
+                android:textStyle="bold"
+                android:text="2021년 4월 21일의 메뉴" />
+
             <EditText
-                android:id="@+id/etHistoryPlaceName"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight=".80"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/et_rounded_corner_rect_bgwhite"
+                android:drawableEnd="@drawable/ic_image_bf_upload"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:background="@drawable/lunch_score_background"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="center"
+                    android:text="@string/score" />
+                <ImageView
+                    android:id="@+id/score1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    app:srcCompat="@drawable/score_unlike" />
+                <ImageView
+                    android:id="@+id/score2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    app:srcCompat="@drawable/score_unlike" />
+                <ImageView
+                    android:id="@+id/score3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    app:srcCompat="@drawable/score_unlike" />
+                <ImageView
+                    android:id="@+id/score4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    app:srcCompat="@drawable/score_unlike" />
+                <ImageView
+                    android:id="@+id/score5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    app:srcCompat="@drawable/score_unlike" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"
+                android:text="@string/placeName" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/etHistoryPlaceName"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".80"
+                    android:background="@drawable/et_rounded_corner_rect_bgwhite"
+                    android:padding="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="15sp" />
+                <ImageView
+                    android:id="@+id/ivHistoryPlaceSearch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".13"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:background="@drawable/search_rounded_border"
+                    app:srcCompat="@drawable/search_icon_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@drawable/line_border"
+                android:visibility="gone"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"
+                android:text="@string/food_category" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/etHistoryMenuName"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".80"
+                    android:background="@drawable/et_rounded_corner_rect_bgwhite"
+                    android:padding="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/ivHistoryMenuSearch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".13"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:background="@drawable/search_rounded_border"
+                    app:srcCompat="@drawable/search_icon_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@drawable/line_border"
+                android:visibility="gone"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"
+                android:text="@string/lunch_memo" />
+            <EditText
+                android:id="@+id/etHistoryLunchMemo"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
                 android:background="@drawable/et_rounded_corner_rect_bgwhite"
                 android:padding="10dp"
                 android:layout_marginEnd="10dp"
+                android:inputType="textMultiLine"
+                android:lines="5"
+                android:gravity="top|start"
                 android:textSize="15sp" />
-
-            <ImageView
-                android:id="@+id/ivHistoryPlaceSearch"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".13"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:background="@drawable/search_rounded_border"
-                app:srcCompat="@drawable/search_icon_black" />
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/nextPlace"
+                    android:layout_width="0dp"
+                    android:layout_weight=".5"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="5dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rl_red_border">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:drawablePadding="15dp"
+                            android:gravity="center"
+                            android:textColor="@color/lunch_red"
+                            android:textSize="15sp"
+                            android:text="@string/cancel" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/lunchChoice"
+                    android:layout_width="0dp"
+                    android:layout_weight=".5"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="5dp"
+                    app:cardCornerRadius="8dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/lunch_red">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:drawablePadding="15dp"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:text="@string/regist" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:id="@+id/etHistoryMenuName"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight=".80"
-                android:background="@drawable/et_rounded_corner_rect_bgwhite"
-                android:padding="10dp"
-                android:layout_marginEnd="10dp"
-                android:textSize="15sp" />
-
-            <ImageView
-                android:id="@+id/ivHistoryMenuSearch"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".13"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:background="@drawable/search_rounded_border"
-                app:srcCompat="@drawable/search_icon_black" />
-        </LinearLayout>
-    </LinearLayout>
-
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

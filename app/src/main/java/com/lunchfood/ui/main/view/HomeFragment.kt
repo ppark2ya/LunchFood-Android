@@ -31,8 +31,9 @@ class HomeFragment: BaseFragment() {
     private var mAddress: String = ""       // 가게 주소(도로명)
     private var mDistance: String = ""       // 가게까지 거리
     private var mRestaurant: String = ""     // 가게명
-    private var userLon: Double = 0.0          // 사용자 x좌표
-    private var userLat: Double = 0.0          // 사용자 y좌표
+    private var mRestaurantUrl: String = ""  // 가게 url
+    private var userLon: Double = 0.0
+    private var userLat: Double = 0.0
     private lateinit var roadAddr: String   // 사용자 설정 주소
     private lateinit var bestMenuList: List<BestMenu>
     private lateinit var mCurrentItem: BestMenu
@@ -128,6 +129,7 @@ class HomeFragment: BaseFragment() {
         tvRestaurantTitleName.text = mRestaurant
         tvRestaurantName.text = mAddress
         "${mDistance}m".also { tvRestaurantDistance.text = it }
+        tvRestaurantUrl.text = mRestaurantUrl
     }
 
     private fun getBestMenuList(data: BestMenuRequest) {
@@ -164,6 +166,7 @@ class HomeFragment: BaseFragment() {
         mAddress = bestMenuList[mNextIndex].addressName
         mDistance = bestMenuList[mNextIndex].distance
         mRestaurant = bestMenuList[mNextIndex].placeName
+        mRestaurantUrl = bestMenuList[mNextIndex].placeUrl
         mNextIndex++
         setRestaurantLocation()
     }
