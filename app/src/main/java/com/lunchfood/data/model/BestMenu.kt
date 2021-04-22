@@ -1,6 +1,5 @@
 package com.lunchfood.data.model
 
-import com.lunchfood.utils.Constants.Companion.DEFAULT_USER_RADIUS
 import com.lunchfood.utils.Constants.Companion.INTERVAL_DATE
 import com.squareup.moshi.Json
 

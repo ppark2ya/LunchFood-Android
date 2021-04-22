@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.view.MenuRegistActivity">
+    tools:context=".ui.main.view.history.MenuRegistActivity">
 
     <include layout="@layout/header"
         android:layout_width="wrap_content"
@@ -27,10 +27,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/lunch_red"
-                android:textStyle="bold"
-                android:text="2021년 4월 21일의 메뉴" />
+                android:textStyle="bold"/>
 
             <EditText
+                android:id="@+id/etImageUpload"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"

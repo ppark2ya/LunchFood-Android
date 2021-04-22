@@ -3,6 +3,8 @@ package com.lunchfood.ui.main.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.lunchfood.data.model.*
+import com.lunchfood.data.model.history.HistoryParam
+import com.lunchfood.data.model.history.HistoryRequest
 import com.lunchfood.data.repository.MainRepository
 import com.lunchfood.utils.Resource
 import kotlinx.coroutines.Dispatchers

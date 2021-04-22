@@ -1,6 +1,9 @@
 package com.lunchfood.data.api
 
 import com.lunchfood.data.model.*
+import com.lunchfood.data.model.history.HistoryParam
+import com.lunchfood.data.model.history.HistoryRequest
+import com.lunchfood.data.model.history.HistoryResponse
 import retrofit2.http.*
 
 interface ApiService {

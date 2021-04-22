@@ -2,7 +2,8 @@ package com.lunchfood.data.api
 
 import com.lunchfood.data.api.RetrofitBuilder.koroadService
 import com.lunchfood.data.model.*
-import retrofit2.http.Body
+import com.lunchfood.data.model.history.HistoryParam
+import com.lunchfood.data.model.history.HistoryRequest
 
 class ApiHelper(private val apiService: ApiService) {
 

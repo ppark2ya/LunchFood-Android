@@ -34,7 +34,9 @@
         <activity android:name=".ui.main.view.KakaoMapActivity" android:screenOrientation="portrait"/>
         <activity android:name=".ui.main.view.BridgeActivity" android:screenOrientation="portrait"/>
         <activity android:name=".ui.main.view.MainActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.main.view.MenuRegistActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.main.view.history.MenuRegistActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.main.view.history.PlaceSearchActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.main.view.history.MenuSearchActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

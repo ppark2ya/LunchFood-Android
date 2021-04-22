@@ -6,13 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.lunchfood.R
-import com.lunchfood.data.model.HistoryParam
-import com.lunchfood.data.model.HistoryResponse
+import com.lunchfood.data.model.history.HistoryParam
+import com.lunchfood.data.model.history.HistoryResponse
 import com.lunchfood.ui.base.BaseFragment
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.ui.main.view.calendar.HistoryDecorator
 import com.lunchfood.ui.main.view.calendar.SaturdayDecorator
 import com.lunchfood.ui.main.view.calendar.SundayDecorator
+import com.lunchfood.ui.main.view.history.MenuRegistActivity
 import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.Status
 import com.prolificinteractive.materialcalendarview.CalendarDay

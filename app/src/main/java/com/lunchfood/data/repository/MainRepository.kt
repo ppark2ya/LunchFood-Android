@@ -2,6 +2,8 @@ package com.lunchfood.data.repository
 
 import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.model.*
+import com.lunchfood.data.model.history.HistoryParam
+import com.lunchfood.data.model.history.HistoryRequest
 
 class MainRepository(private val apiHelper: ApiHelper) {
 

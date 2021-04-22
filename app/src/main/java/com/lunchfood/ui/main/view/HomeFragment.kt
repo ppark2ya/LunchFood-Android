@@ -10,7 +10,7 @@ import androidx.cardview.widget.CardView
 import com.lunchfood.R
 import com.lunchfood.data.model.BestMenu
 import com.lunchfood.data.model.BestMenuRequest
-import com.lunchfood.data.model.HistoryRequest
+import com.lunchfood.data.model.history.HistoryRequest
 import com.lunchfood.ui.base.BaseFragment
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.utils.Constants

@@ -1,6 +1,5 @@
 package com.lunchfood.data.model
 
-import com.google.gson.annotations.SerializedName
 import com.lunchfood.utils.Constants.Companion.OPEN_API_ROAD_ADDRESS_KEY
 import com.squareup.moshi.JsonClass
 
