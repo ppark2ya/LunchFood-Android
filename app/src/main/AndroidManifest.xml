@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:allowBackup="true"
@@ -19,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LunchFood"
         android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
         android:name=".ui.base.GlobalApplication">
 
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key"/>
@@ -45,6 +48,7 @@
                 <data android:host="oauth" android:scheme="@string/kakao_app_key" />
             </intent-filter>
         </activity>
+        <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />
     </application>
 
 </manifest>

@@ -87,9 +87,13 @@ dependencies {
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
     // EncryptedSharedPreferences
     implementation "androidx.security:security-crypto:1.1.0-alpha03"
-
+    // gif 처리
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     kapt 'com.github.bumptech.glide:compiler:4.12.0'
-
+    // calendar 관련 보조 lib
     implementation 'com.jakewharton.threetenabp:threetenabp:1.1.1'
+    // aws
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.13.5'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.13.5'
+    implementation 'com.amazonaws:aws-android-sdk-mobile-client:2.13.5'
 }
