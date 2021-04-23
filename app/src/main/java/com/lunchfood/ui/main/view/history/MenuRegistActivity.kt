@@ -156,7 +156,7 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON) {
 
         val transferUtility = TransferUtility.builder()
             .context(applicationContext)
-            .defaultBucket("")  // bucket name
+            .defaultBucket("lunch-image")  // bucket name
             .s3Client(AmazonS3Client(credentialProvider, Region.getRegion(Regions.AP_NORTHEAST_2)))
             .build()
 
