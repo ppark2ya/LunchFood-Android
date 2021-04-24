@@ -15,4 +15,6 @@ class MainRepository(private val apiHelper: ApiHelper) {
     suspend fun getBestMenuList(data: BestMenuRequest) = apiHelper.getBestMenuList(data)
     suspend fun insertHistory(data: HistoryRequest) = apiHelper.insertHistory(data)
     suspend fun getPlaceHistory(data: HistoryParam) = apiHelper.getPlaceHistory(data)
+    suspend fun getPlaceAuto(data: CommonParam) = apiHelper.getPlaceAuto(data)
+    suspend fun getFoodAuto(data: CommonParam) = apiHelper.getFoodAuto(data)
 }

@@ -4,8 +4,13 @@ import com.lunchfood.data.model.*
 import com.lunchfood.data.model.history.HistoryParam
 import com.lunchfood.data.model.history.HistoryRequest
 import com.lunchfood.data.model.history.HistoryResponse
+import com.lunchfood.data.model.history.PlaceInfo
 import retrofit2.http.*
 
+/**
+ * @docs http://13.209.115.50:3500/docs
+         http://13.209.115.50:3500/redoc
+ */
 interface ApiService {
     /**
      * @param id: 사용자 ID
@@ -86,4 +91,18 @@ interface ApiService {
      */
     @POST("/history/get_place_history")
     suspend fun getPlaceHistory(@Body data: HistoryParam): RetrofitResponse<List<HistoryResponse>>
+
+    /**
+     * @param q: 사용자 입력 문자열
+     * @desc 음식점 자동완성 api
+     */
+    @POST("/history/place_auto")
+    suspend fun getPlaceAuto(@Body data: CommonParam): RetrofitResponse<List<PlaceInfo>>
+
+    /**
+     * @param q: 사용자 입력 문자열
+     * @desc 음식명 자동완성 api
+     */
+    @POST("/history/food_auto")
+    suspend fun getFoodAuto(@Body data: CommonParam): RetrofitResponse<List<String>>
 }

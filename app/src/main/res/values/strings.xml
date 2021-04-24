@@ -26,9 +26,14 @@
     <string name="menu_history">식사기록</string>
     <string name="score">불꽃점수</string>
     <string name="placeName">음식점</string>
+    <string name="placeName_search_title">음식점 검색</string>
     <string name="food_category">음식종류</string>
     <string name="lunch_memo">먹방일지</string>
     <string name="cancel">취소</string>
     <string name="regist">등록</string>
     <string name="dayMenuDate">%d년 %d월 %d일의 메뉴</string>
+    <string name="input_place_name_hint">음식점 이름을 입력해주세요.</string>
+    <string name="food_name">음식명</string>
+    <string name="food_name_search_title">음식명 검색</string>
+    <string name="input_food_name_hint">음식명을 입력해주세요</string>
 </resources>

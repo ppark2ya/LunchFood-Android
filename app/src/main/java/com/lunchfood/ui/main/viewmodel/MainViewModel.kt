@@ -82,4 +82,22 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
             emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
+
+    fun getPlaceAuto(data: CommonParam) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.getPlaceAuto(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun getFoodAuto(data: CommonParam) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.getFoodAuto(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
 }

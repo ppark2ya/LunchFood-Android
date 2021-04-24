@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.lunchfood.R
 import com.lunchfood.data.model.history.HistoryParam
 import com.lunchfood.data.model.history.HistoryResponse
@@ -33,7 +34,10 @@ class HistoryFragment: BaseFragment() {
     ): View? {
         historyView = inflater.inflate(R.layout.fragment_history, container, false)
         materialCalendarView = historyView.findViewById(R.id.calendarView)
-        mainActivity.run { setCommonHeaderText(getString(R.string.menu_history), historyView) }
+        mainActivity.run {
+            historyView.findViewById<ImageView>(R.id.headerBackBtn).visibility = View.GONE
+            setCommonHeaderText(getString(R.string.menu_history), historyView)
+        }
 
         val now = CalendarDay.today()
         materialCalendarView.selectedDate = now

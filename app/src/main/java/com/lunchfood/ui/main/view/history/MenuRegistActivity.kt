@@ -3,6 +3,7 @@ package com.lunchfood.ui.main.view.history
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.view.MotionEvent
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferNetworkLossHandler
@@ -14,11 +15,13 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.lunchfood.R
 import com.lunchfood.data.model.history.HistoryResponse
+import com.lunchfood.data.model.history.PlaceInfo
 import com.lunchfood.ui.base.BaseActivity
 import com.lunchfood.utils.Constants.Companion.AWS_COGNITO_CREDENTIAL_POOL_ID
 import com.lunchfood.utils.Dlog
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.android.synthetic.main.activity_menu_regist.*
+import kotlinx.android.synthetic.main.header.*
 import org.threeten.bp.LocalDate
 import java.io.File
 import java.lang.Exception
@@ -27,6 +30,8 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON) {
 
     private val mDayMenu by lazy { intent.getSerializableExtra("dayMenu") as HistoryResponse }
     private var mScore = 0
+    private var mPlaceInfo: PlaceInfo? = null
+    private var mFoodName: String? = ""
     private val PLACE_SEARCH_REQUEST_CODE = 0
     private val MENU_SEARCH_REQUEST_CODE = 1
 
@@ -47,18 +52,14 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON) {
         when(requestCode) {
             PLACE_SEARCH_REQUEST_CODE -> {
                 if(resultCode == RESULT_OK) {
-                    val result = data?.getStringExtra("result")
-                    Dlog.i("결과값::: $result")
-                } else {
-
+                    mPlaceInfo = data?.getSerializableExtra("placeInfo") as PlaceInfo?
+                    etHistoryPlaceName.setText(mPlaceInfo?.placeName?: "")
                 }
             }
             MENU_SEARCH_REQUEST_CODE -> {
                 if(resultCode == RESULT_OK) {
-                    val result = data?.getStringExtra("result")
-                    Dlog.i("결과값::: $result")
-                } else {
-
+                    mFoodName = data?.getStringExtra("foodName")
+                    etHistoryMenuName.setText(mFoodName?: "")
                 }
             }
         }
@@ -79,6 +80,9 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON) {
     }
 
     private fun setupEventListener() {
+        headerBackBtn.setOnClickListener {
+            onBackPressed()
+        }
         score1.setOnClickListener {
             score1.setImageResource(R.drawable.score_like)
             score2.setImageResource(R.drawable.score_unlike)
@@ -120,13 +124,19 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON) {
             mScore = 5
         }
 
-        etImageUpload.setOnClickListener {
-            Dlog.i("이미지 업로드 클릭!!!")
+        // 참고 : https://gist.github.com/Reacoder/0b316726564f85523251
+        // EditText의 경우 이벤트리스너가 OnTouch -> OnFocusChange -> OnClick 순으로 실행되어 click의 경우 바로 안먹음
+        etImageUpload.setOnTouchListener { view, motionEvent ->
+            if(MotionEvent.ACTION_UP == motionEvent.action) {
+                Dlog.i("이미지 업로드 클릭!!!")
+            }
+            false
         }
 
-        etHistoryPlaceName.setOnClickListener {
+        etHistoryPlaceName.setOnTouchListener { view, motionEvent ->
             val intent = Intent(this@MenuRegistActivity, PlaceSearchActivity::class.java)
             startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), PLACE_SEARCH_REQUEST_CODE)
+            false
         }
 
         ivHistoryPlaceSearch.setOnClickListener {
@@ -134,9 +144,10 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON) {
             startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), PLACE_SEARCH_REQUEST_CODE)
         }
 
-        etHistoryMenuName.setOnClickListener {
+        etHistoryMenuName.setOnTouchListener { view, motionEvent ->
             val intent = Intent(this@MenuRegistActivity, MenuSearchActivity::class.java)
-            startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), MENU_SEARCH_REQUEST_CODE)
+            startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), PLACE_SEARCH_REQUEST_CODE)
+            false
         }
 
         ivHistoryMenuSearch.setOnClickListener {
