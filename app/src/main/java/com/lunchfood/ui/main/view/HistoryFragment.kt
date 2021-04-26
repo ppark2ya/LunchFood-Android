@@ -23,7 +23,7 @@ import org.threeten.bp.LocalDate
 
 class HistoryFragment: BaseFragment() {
 
-    private lateinit var historyView: View
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
     private lateinit var materialCalendarView: MaterialCalendarView
     private var mCalendarDataList: List<HistoryResponse>? = null
 
@@ -32,11 +32,16 @@ class HistoryFragment: BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        historyView = inflater.inflate(R.layout.fragment_history, container, false)
-        materialCalendarView = historyView.findViewById(R.id.calendarView)
+        return inflater.inflate(R.layout.fragment_history, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        materialCalendarView = view.findViewById(R.id.calendarView)
         mainActivity.run {
-            historyView.findViewById<ImageView>(R.id.headerBackBtn).visibility = View.GONE
-            setCommonHeaderText(getString(R.string.menu_history), historyView)
+            view.findViewById<ImageView>(R.id.headerBackBtn).visibility = View.GONE
+            setCommonHeaderText(getString(R.string.menu_history), view)
         }
 
         val now = CalendarDay.today()
@@ -50,8 +55,6 @@ class HistoryFragment: BaseFragment() {
             )
         )
         setupCalendarEventListener()
-
-        return historyView
     }
 
     private fun setupCalendarView() {
@@ -66,28 +69,30 @@ class HistoryFragment: BaseFragment() {
     }
 
     private fun getPlaceHistory(data: HistoryParam) {
-        GlobalApplication.getViewModel()!!.getPlaceHistory(data).observe(viewLifecycleOwner, {
-            it?.let { resource ->
-                when(resource.status) {
-                    Status.PENDING -> {
-                        mainActivity.loadingStart()
-                    }
-                    Status.SUCCESS -> {
-                        mainActivity.loadingEnd()
-                        resource.data?.let { res ->
-                            if(res.resultCode == 200) {
-                                mCalendarDataList = res.data as List<HistoryResponse>
-                                setupCalendarView()
+        mainViewModel?.run {
+            getPlaceHistory(data).observe(viewLifecycleOwner, {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {
+                            mainActivity.loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            mainActivity.loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    mCalendarDataList = res.data as List<HistoryResponse>
+                                    setupCalendarView()
+                                }
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        mainActivity.loadingEnd()
-                        Dlog.e("getPlaceHistory FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            mainActivity.loadingEnd()
+                            Dlog.e("getPlaceHistory FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun setupCalendarEventListener() {

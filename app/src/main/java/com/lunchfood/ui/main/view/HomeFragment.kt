@@ -24,7 +24,7 @@ import net.daum.mf.map.api.MapView
 
 class HomeFragment: BaseFragment() {
 
-    private lateinit var homeView: View
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
     private lateinit var mMapView: MapView
     private var mLat: Double = Constants.LATITUDE_DEFAULT   // 가게 y좌표
     private var mLon: Double = Constants.LONGITUDE_DEFAULT  // 가게 x좌표
@@ -46,13 +46,6 @@ class HomeFragment: BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeView = inflater.inflate(R.layout.fragment_home, container, false)
-
-        mMapView = MapView(activity)
-        // mMapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
-
-        val mapViewContainer = homeView.findViewById<ViewGroup>(R.id.rlMainMapView)
-        mapViewContainer.addView(mMapView)
         val extra = arguments
         if(extra != null) {
             userLat = extra.getDouble("lat")
@@ -60,25 +53,30 @@ class HomeFragment: BaseFragment() {
             roadAddr = extra.getString("roadAddr", "")
         }
 
-        setUserLocation()
-        setupEventListener()
-
-        return homeView
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         headerBackBtn.visibility = View.GONE
+
+        mMapView = MapView(activity)
+        val mapViewContainer = view.findViewById<ViewGroup>(R.id.rlMainMapView)
+        mapViewContainer.addView(mMapView)
+
+        setUserLocation()
+        setupEventListener(view)
+
         mNextIndex = 0
         getBestMenuList(BestMenuRequest(id = userId))
     }
 
-    private fun setupEventListener() {
-        homeView.findViewById<CardView>(R.id.nextPlace).setOnClickListener {
+    private fun setupEventListener(view: View) {
+        view.findViewById<CardView>(R.id.nextPlace).setOnClickListener {
             insertHistory(makeRequestBody(0))
         }
 
-        homeView.findViewById<CardView>(R.id.lunchChoice).setOnClickListener {
+        view.findViewById<CardView>(R.id.lunchChoice).setOnClickListener {
             insertHistory(makeRequestBody(1))
         }
     }
@@ -133,30 +131,32 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun getBestMenuList(data: BestMenuRequest) {
-        GlobalApplication.getViewModel()!!.getBestMenuList(data).observe(viewLifecycleOwner, {
-            it?.let { resource ->
-                when(resource.status) {
-                    Status.PENDING -> {
-                        mainActivity.loadingStart()
-                    }
-                    Status.SUCCESS -> {
-                        mainActivity.loadingEnd()
-                        resource.data?.let { res ->
-                            if(res.resultCode == 200) {
-                                bestMenuList = res.data!!
-                                mSize = bestMenuList.size
-                                Dlog.i("메뉴목록 데이터::: $bestMenuList")
-                                showRestaurant()
+        mainViewModel?.let { model ->
+            model.getBestMenuList(data).observe(viewLifecycleOwner, {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {
+                            mainActivity.loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            mainActivity.loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    bestMenuList = res.data!!
+                                    mSize = bestMenuList.size
+                                    Dlog.i("메뉴목록 데이터::: $bestMenuList")
+                                    showRestaurant()
+                                }
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        mainActivity.loadingEnd()
-                        Dlog.e("getBestMenuList FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            mainActivity.loadingEnd()
+                            Dlog.e("getBestMenuList FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun showRestaurant() {
@@ -184,29 +184,31 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun insertHistory(data: HistoryRequest) {
-        GlobalApplication.getViewModel()!!.insertHistory(data).observe(viewLifecycleOwner, {
-            it?.let { resource ->
-                when(resource.status) {
-                    Status.PENDING -> {
-                        mainActivity.loadingStart()
-                    }
-                    Status.SUCCESS -> {
-                        mainActivity.loadingEnd()
-                        resource.data?.let { res ->
-                            if(res.resultCode == 200) {
-                                if(mSize > mNextIndex) {
-                                    // TODO: 선택했을 때 시나리오 필요할 듯
-                                    showRestaurant()
+        mainViewModel?.let { model ->
+            model.insertHistory(data).observe(viewLifecycleOwner, {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {
+                            mainActivity.loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            mainActivity.loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    if(mSize > mNextIndex) {
+                                        // TODO: 선택했을 때 시나리오 필요할 듯
+                                        showRestaurant()
+                                    }
                                 }
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        mainActivity.loadingEnd()
-                        Dlog.e("insertHistory FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            mainActivity.loadingEnd()
+                            Dlog.e("insertHistory FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 }

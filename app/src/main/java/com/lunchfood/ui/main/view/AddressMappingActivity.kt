@@ -35,6 +35,7 @@ import java.lang.Exception
 
 class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
 
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
     private lateinit var adapter: AddressAdapter
     private val REQUEST_CODE = 1
     private lateinit var layout: View
@@ -189,39 +190,41 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
     }
 
     private fun getAddressList(addressParam: HashMap<String, Any>) {
-        GlobalApplication.getViewModel()!!.getAddressList(addressParam).observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.PENDING -> {
-                        addrRecyclerView.visibility = View.GONE
-                    }
-                    Status.SUCCESS -> {
-                        addrRecyclerView.visibility = View.VISIBLE
-                        resource.data?.let { res ->
-                            try {
-                                val addressCommonResult = res.results.common
-                                val addressJusoList = res.results.juso
+        mainViewModel?.let { model ->
+            model.getAddressList(addressParam).observe(this@AddressMappingActivity, {
+                it.let { resource ->
+                    when (resource.status) {
+                        Status.PENDING -> {
+                            addrRecyclerView.visibility = View.GONE
+                        }
+                        Status.SUCCESS -> {
+                            addrRecyclerView.visibility = View.VISIBLE
+                            resource.data?.let { res ->
+                                try {
+                                    val addressCommonResult = res.results.common
+                                    val addressJusoList = res.results.juso
 
-                                if (addressCommonResult.errorCode == "0") {
-                                    if (addressJusoList != null) {
-                                        retrieveList(addressJusoList)
+                                    if (addressCommonResult.errorCode == "0") {
+                                        if (addressJusoList != null) {
+                                            retrieveList(addressJusoList)
 //                                        scrollToBottom()
+                                        }
+                                    } else {
+                                        addrRecyclerView.visibility = View.GONE
                                     }
-                                } else {
-                                    addrRecyclerView.visibility = View.GONE
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        addrRecyclerView.visibility = View.GONE
-                        Dlog.e("getAddressList FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            addrRecyclerView.visibility = View.GONE
+                            Dlog.e("getAddressList FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun retrieveList(addressList: List<AddressItem>) {
@@ -232,67 +235,71 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
     }
 
     private fun getAddressCoord(addressParam: HashMap<String, Any>) {
-        GlobalApplication.getViewModel()!!.getAddressCoord(addressParam).observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.PENDING -> {
-                        loadingStart()
-                    }
-                    Status.SUCCESS -> {
-                        loadingEnd()
-                        resource.data?.let { res ->
-                            try {
-                                val addressCommonResult = res.results.common
-                                val addressCoord = res.results.juso
+        mainViewModel?.let { model ->
+            model.getAddressCoord(addressParam).observe(this@AddressMappingActivity, {
+                it.let { resource ->
+                    when (resource.status) {
+                        Status.PENDING -> {
+                            loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            loadingEnd()
+                            resource.data?.let { res ->
+                                try {
+                                    val addressCommonResult = res.results.common
+                                    val addressCoord = res.results.juso
 
-                                if (addressCommonResult.errorCode == "0") {
-                                    addressCoord?.let {
-                                        val coordItem = addressCoord[0]
-                                        val roadAddr = addressParam["roadAddr"]
-                                        updateLocation(
-                                            User(id = userId, lat = coordItem.entY, lon = coordItem.entX, address = roadAddr.toString(), type = "UTMK")
-                                        )
+                                    if (addressCommonResult.errorCode == "0") {
+                                        addressCoord?.let {
+                                            val coordItem = addressCoord[0]
+                                            val roadAddr = addressParam["roadAddr"]
+                                            updateLocation(
+                                                User(id = userId, lat = coordItem.entY, lon = coordItem.entX, address = roadAddr.toString(), type = "UTMK")
+                                            )
+                                        }
                                     }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        loadingEnd()
-                        Dlog.e("getAddressCoord FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            loadingEnd()
+                            Dlog.e("getAddressCoord FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun updateLocation(data: User) {
-        GlobalApplication.getViewModel()!!.updateLocation(data).observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.PENDING -> {
-                        loadingStart()
-                    }
-                    Status.SUCCESS -> {
-                        loadingEnd()
-                        resource.data?.let { res ->
-                            if(res.resultCode == 200) {
-                                val intent = Intent(this, BridgeActivity::class.java)
-                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                            } else {
-                                Toast.makeText(this@AddressMappingActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)
+        mainViewModel?.let { model ->
+            model.updateLocation(data).observe(this@AddressMappingActivity, {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.PENDING -> {
+                            loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    val intent = Intent(this, BridgeActivity::class.java)
+                                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                                } else {
+                                    Toast.makeText(this@AddressMappingActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)
+                                }
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        loadingEnd()
-                        Dlog.e("getAddressList FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            loadingEnd()
+                            Dlog.e("getAddressList FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun scrollToBottom() {

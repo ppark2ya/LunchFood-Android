@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 
 class BridgeActivity: BaseActivity(TransitionMode.HORIZON) {
 
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bridge)
@@ -26,31 +28,33 @@ class BridgeActivity: BaseActivity(TransitionMode.HORIZON) {
     }
 
     private fun getAccount(data: User) {
-        GlobalApplication.getViewModel()!!.getAccount(data).observe(this, {
-            it?.let { resource ->
-                when(resource.status) {
-                    Status.PENDING -> {}
-                    Status.SUCCESS -> {
-                        resource.data?.let { res ->
-                            if(res.resultCode == 200) {
-                                val user = res.data
-                                launch {
-                                    delay(1000)
-                                    forwardMainPage(user!!.lat!!, user.lon!!, user.address!!)
+        mainViewModel?.run {
+            getAccount(data).observe(this@BridgeActivity, {
+                it?.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {}
+                        Status.SUCCESS -> {
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    val user = res.data
+                                    launch {
+                                        delay(1000)
+                                        forwardMainPage(user!!.lat!!, user.lon!!, user.address!!)
+                                    }
+                                } else {
+                                    val intent = Intent(this@BridgeActivity, KakaoLoginActivity::class.java)
+                                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
                                 }
-                            } else {
-                                val intent = Intent(this, KakaoLoginActivity::class.java)
-                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        loadingEnd()
-                        Dlog.e("getAccount FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            loadingEnd()
+                            Dlog.e("getAccount FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun forwardMainPage(lat: String, lon: String, address: String) {

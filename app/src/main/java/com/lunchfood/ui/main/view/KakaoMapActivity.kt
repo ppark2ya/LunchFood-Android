@@ -35,6 +35,7 @@ import java.lang.Exception
 
 class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
 
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
     private lateinit var mMapView: MapView
     private lateinit var mapViewContainer: RelativeLayout
     private lateinit var mReverseGeoCoder: MapReverseGeoCoder
@@ -134,30 +135,32 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
     }
 
     private fun updateLocation(data: User) {
-        GlobalApplication.getViewModel()!!.updateLocation(data).observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.PENDING -> {
-                        loadingStart()
-                    }
-                    Status.SUCCESS -> {
-                        loadingEnd()
-                        resource.data?.let { res ->
-                            if(res.resultCode == 200) {
-                                val intent = Intent(this, BridgeActivity::class.java)
-                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                            } else {
-                                Toast.makeText(this@KakaoMapActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)
+        mainViewModel?.let { model ->
+            model.updateLocation(data).observe(this, {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.PENDING -> {
+                            loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    val intent = Intent(this, BridgeActivity::class.java)
+                                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                                } else {
+                                    Toast.makeText(this@KakaoMapActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)
+                                }
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        loadingEnd()
-                        Dlog.e("getAddressList FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            loadingEnd()
+                            Dlog.e("getAddressList FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     override fun onCurrentLocationUpdate(mapView: MapView?, currentLocation: MapPoint?, accuracyInMeters: Float) {

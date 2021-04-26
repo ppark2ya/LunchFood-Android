@@ -12,6 +12,8 @@ import com.lunchfood.utils.Status
 
 class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
 
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)
@@ -21,32 +23,34 @@ class IntroActivity : BaseActivity(TransitionMode.HORIZON) {
     }
 
     private fun getAccount(data: User) {
-        GlobalApplication.getViewModel()!!.getAccount(data).observe(this, {
-            it?.let { resource ->
-                when(resource.status) {
-                    Status.PENDING -> {}
-                    Status.SUCCESS -> {
-                        loadingEnd()
-                        resource.data?.let { res ->
-                            if(res.resultCode == 200) {
-                                val intent = Intent(this, MainActivity::class.java)
-                                intent.putExtra("lon", res.data!!.lon!!.toDouble())   // 경도
-                                intent.putExtra("lat", res.data.lat!!.toDouble())  // 위도
-                                intent.putExtra("roadAddr", res.data.address)   // 주소
-                                // 1번 호출 후 스택에서 제거해서 뒤로가기 방지
-                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-                            } else {
-                                val intent = Intent(this, KakaoLoginActivity::class.java)
-                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+        mainViewModel?.let { model ->
+            model.getAccount(data).observe(this, {
+                it?.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {}
+                        Status.SUCCESS -> {
+                            loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    val intent = Intent(this, MainActivity::class.java)
+                                    intent.putExtra("lon", res.data!!.lon!!.toDouble())   // 경도
+                                    intent.putExtra("lat", res.data.lat!!.toDouble())  // 위도
+                                    intent.putExtra("roadAddr", res.data.address)   // 주소
+                                    // 1번 호출 후 스택에서 제거해서 뒤로가기 방지
+                                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                                } else {
+                                    val intent = Intent(this, KakaoLoginActivity::class.java)
+                                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                                }
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        loadingEnd()
-                        Dlog.e("getAccount FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            loadingEnd()
+                            Dlog.e("getAccount FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 }

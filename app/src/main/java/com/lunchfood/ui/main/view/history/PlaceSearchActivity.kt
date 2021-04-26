@@ -20,6 +20,7 @@ import java.lang.Exception
 
 class PlaceSearchActivity : BaseActivity(TransitionMode.HORIZON) {
 
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
     private val adapter by lazy { PlaceNameSearchAdapter(arrayListOf()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,33 +72,35 @@ class PlaceSearchActivity : BaseActivity(TransitionMode.HORIZON) {
     }
 
     private fun getPlaceAuto(q: CommonParam) {
-        GlobalApplication.getViewModel()!!.getPlaceAuto(q).observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.PENDING -> {
-                        placeNameRecyclerView.visibility = View.GONE
-                    }
-                    Status.SUCCESS -> {
-                        placeNameRecyclerView.visibility = View.VISIBLE
-                        resource.data?.let { res ->
-                            try {
-                                if (res.resultCode == 200) {
-                                    retrieveList(res.data!!)
-                                } else {
-                                    placeNameRecyclerView.visibility = View.GONE
+        mainViewModel?.let { model ->
+            model.getPlaceAuto(q).observe(this, {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.PENDING -> {
+                            placeNameRecyclerView.visibility = View.GONE
+                        }
+                        Status.SUCCESS -> {
+                            placeNameRecyclerView.visibility = View.VISIBLE
+                            resource.data?.let { res ->
+                                try {
+                                    if (res.resultCode == 200) {
+                                        retrieveList(res.data!!)
+                                    } else {
+                                        placeNameRecyclerView.visibility = View.GONE
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        placeNameRecyclerView.visibility = View.GONE
-                        Dlog.e("getPlaceAuto FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            placeNameRecyclerView.visibility = View.GONE
+                            Dlog.e("getPlaceAuto FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun retrieveList(placeInfoList: List<PlaceInfo>) {

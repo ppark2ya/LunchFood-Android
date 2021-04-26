@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="user_radius">
+        <item>100M</item>
+        <item>200M</item>
+        <item>300M</item>
+        <item>400M</item>
+        <item>500M</item>
+        <item>600M</item>
+        <item>700M</item>
+        <item>800M</item>
+        <item>900M</item>
+        <item>1000M</item>
+    </string-array>
+
+    <string-array name="duplicated_interval">
+        <item>1일</item>
+        <item>2일</item>
+        <item>3일</item>
+        <item>4일</item>
+        <item>5일</item>
+        <item>6일</item>
+        <item>7일</item>
+        <item>2주</item>
+        <item>3주</item>
+        <item>4주</item>
+    </string-array>
+</resources>

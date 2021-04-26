@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
 
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -37,32 +39,34 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
     }
 
     private fun insertAccount(data: User) {
-        GlobalApplication.getViewModel()!!.insertAccount(data).observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.PENDING -> {
-                        loadingStart()
-                    }
-                    Status.SUCCESS -> {
-                        loadingEnd()
-                        resource.data?.let { res ->
-                            if(res.resultCode == 200) {
-                                Dlog.i("유저정보 등록 성공: $res")
-                                PreferenceManager.setLong("userId", data.id)
-                                val intent = Intent(this, AddressMappingActivity::class.java)
-                                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                            } else {
-                                Toast.makeText(this@KakaoLoginActivity, "로그인에 실패했습니다.", Toast.LENGTH_SHORT)
+        mainViewModel?.let { model ->
+            model.insertAccount(data).observe(this, {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.PENDING -> {
+                            loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    Dlog.i("유저정보 등록 성공: $res")
+                                    PreferenceManager.setLong("userId", data.id)
+                                    val intent = Intent(this, AddressMappingActivity::class.java)
+                                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                                } else {
+                                    Toast.makeText(this@KakaoLoginActivity, "로그인에 실패했습니다.", Toast.LENGTH_SHORT)
+                                }
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        loadingEnd()
-                        Dlog.e("insertAccount FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            loadingEnd()
+                            Dlog.e("insertAccount FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private val callback: ((OAuthToken?, Throwable?) -> Unit) = { token, error ->

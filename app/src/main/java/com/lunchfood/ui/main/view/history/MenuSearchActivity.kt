@@ -11,16 +11,15 @@ import com.lunchfood.ui.base.BaseActivity
 import com.lunchfood.ui.base.BaseListener
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.ui.main.adapter.FoodNameSearchAdapter
-import com.lunchfood.ui.main.adapter.PlaceNameSearchAdapter
 import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.activity_menu_search.*
-import kotlinx.android.synthetic.main.activity_place_search.*
 import kotlinx.android.synthetic.main.header.*
 import java.lang.Exception
 
 class MenuSearchActivity : BaseActivity(TransitionMode.HORIZON) {
 
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
     private val adapter by lazy { FoodNameSearchAdapter(arrayListOf()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,33 +71,35 @@ class MenuSearchActivity : BaseActivity(TransitionMode.HORIZON) {
     }
 
     private fun getFoodAuto(q: CommonParam) {
-        GlobalApplication.getViewModel()!!.getFoodAuto(q).observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.PENDING -> {
-                        foodNameRecyclerView.visibility = View.GONE
-                    }
-                    Status.SUCCESS -> {
-                        foodNameRecyclerView.visibility = View.VISIBLE
-                        resource.data?.let { res ->
-                            try {
-                                if (res.resultCode == 200) {
-                                    retrieveList(res.data!!)
-                                } else {
-                                    foodNameRecyclerView.visibility = View.GONE
+        mainViewModel?.let { model ->
+            model.getFoodAuto(q).observe(this, {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.PENDING -> {
+                            foodNameRecyclerView.visibility = View.GONE
+                        }
+                        Status.SUCCESS -> {
+                            foodNameRecyclerView.visibility = View.VISIBLE
+                            resource.data?.let { res ->
+                                try {
+                                    if (res.resultCode == 200) {
+                                        retrieveList(res.data!!)
+                                    } else {
+                                        foodNameRecyclerView.visibility = View.GONE
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        foodNameRecyclerView.visibility = View.GONE
-                        Dlog.e("getFoodAuto FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            foodNameRecyclerView.visibility = View.GONE
+                            Dlog.e("getFoodAuto FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun retrieveList(foodList: List<String>) {
