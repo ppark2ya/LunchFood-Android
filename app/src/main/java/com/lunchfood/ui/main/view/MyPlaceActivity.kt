@@ -12,6 +12,7 @@ class MyPlaceActivity : BaseActivity(TransitionMode.HORIZON) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_myplace)
+        setCommonHeaderText(getString(R.string.frequently_used_restaurants))
     }
 
 }

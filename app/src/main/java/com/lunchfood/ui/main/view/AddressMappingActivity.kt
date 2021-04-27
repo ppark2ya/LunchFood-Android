@@ -1,7 +1,6 @@
 package com.lunchfood.ui.main.view
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -112,8 +111,7 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
 
     // 참고: https://github.com/manorgass/tistory/blob/master/android/PermissionTest/app/src/main/java/com/tistory/manorgass/permissiontest/MainActivity.kt
     private fun isLocationPermissionGranted(): Boolean {
-        val preference = getPreferences(Context.MODE_PRIVATE)
-        val isFirstCheck = preference.getBoolean("isFirstPermissionCheck", true)
+        val isFirstCheck = PreferenceManager.getBoolean("isFirstPermissionCheck", true)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -126,7 +124,7 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
             } else {
                 if (isFirstCheck) {
                     // 처음 물었는지 여부를 저장
-                    preference.edit().putBoolean("isFirstPermissionCheck", false).apply()
+                    PreferenceManager.setBoolean("isFirstPermissionCheck", false)
                     // 권한요청
                     ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
                 } else {

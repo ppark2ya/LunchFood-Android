@@ -87,8 +87,8 @@ class PreferenceManager {
          * @param key
          * @return
          */
-        fun getBoolean(key: String): Boolean {
-            return sharedPreferences.getBoolean(key, DEFAULT_VALUE_BOOLEAN)
+        fun getBoolean(key: String, defaultValue: Boolean = DEFAULT_VALUE_BOOLEAN): Boolean {
+            return sharedPreferences.getBoolean(key, defaultValue)
         }
 
         /**
@@ -96,8 +96,8 @@ class PreferenceManager {
          * @param key
          * @return
          */
-        fun getInt(key: String): Int {
-            return sharedPreferences.getInt(key, DEFAULT_VALUE_INT)
+        fun getInt(key: String, defaultValue: Int = DEFAULT_VALUE_INT): Int {
+            return sharedPreferences.getInt(key, defaultValue)
         }
 
         /**
@@ -105,8 +105,8 @@ class PreferenceManager {
          * @param key
          * @return
          */
-        fun getLong(key: String): Long {
-            return sharedPreferences.getLong(key, DEFAULT_VALUE_LONG)
+        fun getLong(key: String, defaultValue: Long = DEFAULT_VALUE_LONG): Long {
+            return sharedPreferences.getLong(key, defaultValue)
         }
 
         /**
@@ -114,8 +114,8 @@ class PreferenceManager {
          * @param key
          * @return
          */
-        fun getFloat(key: String): Float {
-            return sharedPreferences.getFloat(key, DEFAULT_VALUE_FLOAT)
+        fun getFloat(key: String, defaultValue: Float = DEFAULT_VALUE_FLOAT): Float {
+            return sharedPreferences.getFloat(key, defaultValue)
         }
 
         /**

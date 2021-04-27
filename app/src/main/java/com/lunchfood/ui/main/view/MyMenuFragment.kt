@@ -12,7 +12,7 @@ import com.lunchfood.ui.base.BaseFragment
 import com.lunchfood.ui.base.GlobalApplication
 import kotlinx.android.synthetic.main.fragment_mymenu.*
 
-class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener {
+class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     private val mainViewModel by lazy { GlobalApplication.getViewModel() }
     private var mUserRadius = 500
@@ -43,10 +43,10 @@ class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener {
         spDuplicatedInterval.setSelection(6)
         spDuplicatedInterval.onItemSelectedListener = this
 
-        tvMyPlaceList.setOnClickListener {
-            val intent = Intent(mainActivity, MyPlaceActivity::class.java)
-            startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), 0)
-        }
+        tvMyPlaceList.setOnClickListener(this)
+        cvUserRadiusBtn.setOnClickListener(this)
+        cvLimitRecommendBtn.setOnClickListener(this)
+        cvDuplicatedMealBtn.setOnClickListener(this)
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -82,7 +82,17 @@ class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        TODO("Not yet implemented")
+    override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+    override fun onClick(v: View?) {
+        when(v?.id) {
+            R.id.tvMyPlaceList -> {
+                val intent = Intent(mainActivity, MyPlaceActivity::class.java)
+                startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), 0)
+            }
+            R.id.cvUserRadiusBtn -> {}
+            R.id.cvLimitRecommendBtn -> {}
+            R.id.cvDuplicatedMealBtn -> {}
+        }
     }
 }

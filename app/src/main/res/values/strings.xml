@@ -36,4 +36,6 @@
     <string name="food_name">음식명</string>
     <string name="food_name_search_title">음식명 검색</string>
     <string name="input_food_name_hint">음식명을 입력해주세요</string>
+    <string name="my_place_regist">음식점 등록하기</string>
+    <string name="frequently_used_restaurants">자주 이용하는 음식점</string>
 </resources>
