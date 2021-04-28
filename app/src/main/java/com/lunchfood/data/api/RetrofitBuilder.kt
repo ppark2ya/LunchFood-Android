@@ -38,6 +38,6 @@ object RetrofitBuilder {
             .build()
     }
 
-    val apiService: ApiService = getRetrofit().create(ApiService::class.java)
-    val koroadService: ApiService = getKoroadRetrofit().create(ApiService::class.java)
+    val apiService: ApiService by lazy { getRetrofit().create(ApiService::class.java) }
+    val koroadService: ApiService by lazy { getKoroadRetrofit().create(ApiService::class.java) }
 }

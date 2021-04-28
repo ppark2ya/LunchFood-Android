@@ -28,11 +28,9 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.google.android.material.snackbar.Snackbar
 import com.lunchfood.R
-import com.lunchfood.data.model.AddressItem
 import com.lunchfood.data.model.history.HistoryResponse
 import com.lunchfood.data.model.history.PlaceInfo
 import com.lunchfood.ui.base.BaseActivity
-import com.lunchfood.utils.CommonUtil
 import com.lunchfood.utils.Constants.Companion.AWS_COGNITO_CREDENTIAL_POOL_ID
 import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.PreferenceManager
@@ -49,10 +47,15 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     private var mScore = 0
     private var mPlaceInfo: PlaceInfo? = null
     private var mFoodName: String? = ""
+    private val mImageUploadPermissions = arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    )
     private val PLACE_SEARCH_REQUEST_CODE = 0
     private val MENU_SEARCH_REQUEST_CODE = 1
     private val PICK_IMAGE_CHOOSER_REQUEST_CODE = 2
     private val IMAGE_PERMISSION_CODE = 3
+    private var mPermissionGrantedCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +72,6 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
         score3.setOnClickListener(this)
         score4.setOnClickListener(this)
         score5.setOnClickListener(this)
-
         // 참고 : https://gist.github.com/Reacoder/0b316726564f85523251
         // EditText의 경우 이벤트리스너가 OnTouch -> OnFocusChange -> OnClick 순으로 실행되어 click의 경우 바로 안먹음
         etImageUpload.setOnTouchListener(this)
@@ -82,9 +84,22 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == IMAGE_PERMISSION_CODE) {
-            // 위치정보 승인
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+            grantResults.forEach {
+                if(it == PackageManager.PERMISSION_GRANTED) {
+                    mPermissionGrantedCount++
+                }
+            }
+            if(mImageUploadPermissions.size == mPermissionGrantedCount) {
+                if(isImagePermissionGranted()) {
+                    startActivityForResult(
+                        getPickImageChooserIntent(
+                            this,
+                            "Pick a service",
+                            includeDocuments = false,
+                            includeCamera = true
+                        ), PICK_IMAGE_CHOOSER_REQUEST_CODE
+                    )
+                }
             } else {
                 Toast.makeText(applicationContext, R.string.no_permission_msg, Toast.LENGTH_SHORT).show()
             }
@@ -94,25 +109,35 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     private fun isImagePermissionGranted(): Boolean {
         val isFirstCheck = PreferenceManager.getBoolean("isFirstImagePermissionCheck", true)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-                // 거부만 한 경우 사용자에게 왜 필요한지 이유를 설명해주는게 좋다
-                val snackBar = Snackbar.make(clMenuRegist, "카메라를 사용하기 위해서는 권한이 필요합니다.", Snackbar.LENGTH_INDEFINITE)
-                snackBar.setAction("권한승인") {
+            || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)
+                && ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                val snackBar = Snackbar.make(clMenuRegist, R.string.suggest_image_upload_permission_grant, Snackbar.LENGTH_INDEFINITE)
+                snackBar.setAction(R.string.permission_granted) {
+                    ActivityCompat.requestPermissions(this, mImageUploadPermissions, IMAGE_PERMISSION_CODE)
+                }
+                snackBar.show()
+            } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                val snackBar = Snackbar.make(clMenuRegist, R.string.suggest_camera_permission_grant, Snackbar.LENGTH_INDEFINITE)
+                snackBar.setAction(R.string.permission_granted) {
                     ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), IMAGE_PERMISSION_CODE)
+                }
+                snackBar.show()
+            } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                val snackBar = Snackbar.make(clMenuRegist, R.string.suggest_file_permission_grant, Snackbar.LENGTH_INDEFINITE)
+                snackBar.setAction(R.string.permission_granted) {
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), IMAGE_PERMISSION_CODE)
                 }
                 snackBar.show()
             } else {
                 if (isFirstCheck) {
-                    // 처음 물었는지 여부를 저장
                     PreferenceManager.setBoolean("isFirstImagePermissionCheck", false)
-                    // 권한요청
-                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), IMAGE_PERMISSION_CODE)
+                    ActivityCompat.requestPermissions(this, mImageUploadPermissions, IMAGE_PERMISSION_CODE)
                 } else {
                     // 사용자가 권한을 거부하면서 다시 묻지않음 옵션을 선택한 경우
-                    // requestPermission을 요청해도 창이 나타나지 않기 때문에 설정창으로 이동한다.
-                    val snackBar = Snackbar.make(clMenuRegist, "카메라 권한이 필요합니다. 확인을 누르면 설정 화면으로 이동합니다.", Snackbar.LENGTH_INDEFINITE)
-                    snackBar.setAction("확인") {
+                    // requestPermission 을 요청해도 창이 나타나지 않기 때문에 설정창으로 이동한다.
+                    val snackBar = Snackbar.make(clMenuRegist, R.string.suggest_image_upload_permission_grant_in_setting, Snackbar.LENGTH_INDEFINITE)
+                    snackBar.setAction(R.string.ok) {
                         val intent = Intent()
                         intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                         val uri = Uri.fromParts("package", packageName, null)
@@ -384,6 +409,7 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
         else
             Intent(action, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         galleryIntent.type = "image/*"
+        galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         val listGallery = packageManager.queryIntentActivities(galleryIntent, 0)
         for (res in listGallery) {
             val intent = Intent(galleryIntent)
