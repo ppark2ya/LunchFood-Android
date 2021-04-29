@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.provider.Settings
@@ -17,6 +18,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferNetworkLossHandler
@@ -40,6 +42,9 @@ import kotlinx.android.synthetic.main.header.*
 import org.threeten.bp.LocalDate
 import java.io.File
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickListener, View.OnTouchListener {
 
@@ -56,6 +61,8 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     private val PICK_IMAGE_CHOOSER_REQUEST_CODE = 2
     private val IMAGE_PERMISSION_CODE = 3
     private var mPermissionGrantedCount = 0
+    private var mCurrentPhotoPath: String? = null
+    private var mOutputFileUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -171,7 +178,12 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             }
             PICK_IMAGE_CHOOSER_REQUEST_CODE -> {
                 if(resultCode == RESULT_OK) {
-                    Dlog.i("asd")
+                    Dlog.i("camera return:: ${data?.data}")
+                    // mOutputFileUri
+                    score1.setImageURI(mOutputFileUri)
+                    data?.data?.let {
+                        score1.setImageURI(it)
+                    }
                 }
             }
         }
@@ -343,11 +355,12 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             allIntents.addAll(getCameraIntents(context, packageManager))
         }
 
-        var galleryIntents = getGalleryIntents(packageManager, Intent.ACTION_GET_CONTENT, includeDocuments)
-        if (galleryIntents.isEmpty()) {
-            // if no intents found for get-content try pick intent action (Huawei P9).
-            galleryIntents = getGalleryIntents(packageManager, Intent.ACTION_PICK, includeDocuments)
-        }
+//        var galleryIntents = getGalleryIntents(packageManager, Intent.ACTION_GET_CONTENT, includeDocuments)
+//        if (galleryIntents.isEmpty()) {
+//            // if no intents found for get-content try pick intent action (Huawei P9).
+//            galleryIntents = getGalleryIntents(packageManager, Intent.ACTION_PICK, includeDocuments)
+//        }
+        val galleryIntents = getGalleryIntents(packageManager, Intent.ACTION_PICK, includeDocuments)
         allIntents.addAll(galleryIntents)
 
         val target: Intent
@@ -377,7 +390,7 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
 
         val allIntents = ArrayList<Intent>()
         // Determine Uri of camera image to save.
-        val outputFileUri = getCaptureImageOutputUri(context)
+        mOutputFileUri = getCaptureImageOutputUri(context)
 
         val captureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val listCam = packageManager.queryIntentActivities(captureIntent, 0)
@@ -385,8 +398,8 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             val intent = Intent(captureIntent)
             intent.component = ComponentName(res.activityInfo.packageName, res.activityInfo.name)
             intent.setPackage(res.activityInfo.packageName)
-            if (outputFileUri != null) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
+            if (mOutputFileUri != null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mOutputFileUri)
             }
             allIntents.add(intent)
         }
@@ -468,11 +481,27 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
      * activity/fragment/widget.
      */
     private fun getCaptureImageOutputUri(context: Context): Uri? {
+        var photoFile: File? = null
         var outputFileUri: Uri? = null
-        val getImage = context.externalCacheDir
-        if (getImage != null) {
-            outputFileUri = Uri.fromFile(File(getImage.path, "pickImageResult.jpeg"))
+        try {
+            photoFile = createImageFile()
+        } catch(e: Exception) {
+            Dlog.e("getCaptureImageOutputUri: ${e.message}")
+            e.printStackTrace()
+        }
+        if(photoFile != null) {
+            outputFileUri = FileProvider.getUriForFile(this, packageName, photoFile)
         }
         return outputFileUri
+    }
+
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "${timeStamp}_pickImageResult"
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val imageFile: File = File.createTempFile(imageFileName, ".jpeg", storageDir)
+        mCurrentPhotoPath = imageFile.absolutePath
+
+        return imageFile
     }
 }
