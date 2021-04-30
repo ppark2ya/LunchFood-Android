@@ -1,6 +1,6 @@
 package com.lunchfood.data.api
 
-import com.lunchfood.utils.Constants.Companion.BASE_URL
+import com.lunchfood.BuildConfig.BASE_URL
 import com.lunchfood.utils.Constants.Companion.KOROAD_URL
 import com.squareup.moshi.*
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

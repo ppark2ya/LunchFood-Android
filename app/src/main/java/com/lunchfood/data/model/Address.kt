@@ -1,6 +1,6 @@
 package com.lunchfood.data.model
 
-import com.lunchfood.utils.Constants.Companion.OPEN_API_ROAD_ADDRESS_KEY
+import com.lunchfood.BuildConfig.OPEN_API_ROAD_ADDRESS_KEY
 import com.squareup.moshi.JsonClass
 
 data class AddressRequest(

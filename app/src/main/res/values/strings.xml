@@ -44,4 +44,5 @@
     <string name="suggest_image_upload_permission_grant">이미지 업로드 기능을 사용하기 위해서는 권한이 필요합니다.</string>
     <string name="suggest_camera_permission_grant">카메라 기능을 사용하기 위해서는 권한이 필요합니다.</string>
     <string name="suggest_file_permission_grant">파일에 접근하기 위해서는 권한이 필요합니다.</string>
+    <string name="user_update_fail_msg">사용자 정보 업데이트에 실패했습니다.</string>
 </resources>

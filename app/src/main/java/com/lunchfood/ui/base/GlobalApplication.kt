@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kakao.sdk.common.KakaoSdk
 import com.lunchfood.R
+import com.lunchfood.data.model.User
 import com.lunchfood.ui.main.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.dialog_loading.*
 
@@ -22,6 +23,7 @@ class GlobalApplication: Application() {
             private set
         private var viewModel: MainViewModel? = null
         private var loadingDialog: AppCompatDialog? = null
+        lateinit var mUserData: User
 
         fun setViewModel(viewModel: MainViewModel) {
             Companion.viewModel = viewModel

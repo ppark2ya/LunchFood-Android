@@ -8,8 +8,13 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.lunchfood.R
+import com.lunchfood.data.model.filter.FilterCommonRequest
+import com.lunchfood.data.model.history.HistoryParam
+import com.lunchfood.data.model.history.HistoryResponse
 import com.lunchfood.ui.base.BaseFragment
 import com.lunchfood.ui.base.GlobalApplication
+import com.lunchfood.utils.Dlog
+import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.fragment_mymenu.*
 
 class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
@@ -83,6 +88,84 @@ class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener, View.O
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+    private fun updateRadius(data: FilterCommonRequest) {
+        mainViewModel?.run {
+            updateRadius(data).observe(viewLifecycleOwner, {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {
+                            mainActivity.loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            mainActivity.loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+
+                                }
+                            }
+                        }
+                        Status.FAILURE -> {
+                            mainActivity.loadingEnd()
+                            Dlog.e("updateRadius FAILURE : ${it.message}")
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun updateDate(data: FilterCommonRequest) {
+        mainViewModel?.run {
+            updateDate(data).observe(viewLifecycleOwner, {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {
+                            mainActivity.loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            mainActivity.loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+
+                                }
+                            }
+                        }
+                        Status.FAILURE -> {
+                            mainActivity.loadingEnd()
+                            Dlog.e("updateDate FAILURE : ${it.message}")
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun updatePlace(data: FilterCommonRequest) {
+        mainViewModel?.run {
+            updatePlace(data).observe(viewLifecycleOwner, {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {
+                            mainActivity.loadingStart()
+                        }
+                        Status.SUCCESS -> {
+                            mainActivity.loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+
+                                }
+                            }
+                        }
+                        Status.FAILURE -> {
+                            mainActivity.loadingEnd()
+                            Dlog.e("updatePlace FAILURE : ${it.message}")
+                        }
+                    }
+                }
+            })
+        }
+    }
 
     override fun onClick(v: View?) {
         when(v?.id) {

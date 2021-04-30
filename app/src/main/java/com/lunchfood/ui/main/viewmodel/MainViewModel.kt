@@ -3,6 +3,7 @@ package com.lunchfood.ui.main.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.lunchfood.data.model.*
+import com.lunchfood.data.model.filter.FilterCommonRequest
 import com.lunchfood.data.model.history.HistoryParam
 import com.lunchfood.data.model.history.HistoryRequest
 import com.lunchfood.data.repository.MainRepository
@@ -96,6 +97,60 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
         emit(Resource.pending(data = null))
         try {
             emit(Resource.success(data = mainRepository.getFoodAuto(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun insertSelectedPlace(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.insertSelectedPlace(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun updateRadius(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.updateRadius(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun updateDate(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.updateDate(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun updatePlace(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.updatePlace(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun getSelectedPlace(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.getSelectedPlace(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun deleteSelectedPlace(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.deleteSelectedPlace(data)))
         } catch (exception: Exception) {
             emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
         }

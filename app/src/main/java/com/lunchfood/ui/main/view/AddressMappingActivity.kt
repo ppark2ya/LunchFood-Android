@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
+import com.lunchfood.BuildConfig.OPEN_API_LOCATION_KEY
 import com.lunchfood.R
 import com.lunchfood.data.model.AddressItem
 import com.lunchfood.data.model.AddressRequest
@@ -24,7 +25,6 @@ import com.lunchfood.ui.base.BaseListener
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.ui.main.adapter.AddressAdapter
 import com.lunchfood.utils.CommonUtil
-import com.lunchfood.utils.Constants.Companion.OPEN_API_LOCATION_KEY
 import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.PreferenceManager
 import com.lunchfood.utils.Status
@@ -286,7 +286,7 @@ class AddressMappingActivity : BaseActivity(TransitionMode.HORIZON) {
                                     val intent = Intent(this, BridgeActivity::class.java)
                                     startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                                 } else {
-                                    Toast.makeText(this@AddressMappingActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)
+                                    Toast.makeText(this@AddressMappingActivity, getString(R.string.user_update_fail_msg), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }

@@ -10,6 +10,7 @@ import com.lunchfood.R.id.eatHistoryItem
 import com.lunchfood.R.id.appTalkItem
 import com.lunchfood.R.id.myMenuItem
 import com.lunchfood.ui.base.BaseActivity
+import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.utils.Constants
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,13 +37,6 @@ class MainActivity: BaseActivity(TransitionMode.HORIZON) {
         historyFragment = HistoryFragment()
         appTalkFragment = AppTalkFragment()
         myMenuFragment = MyMenuFragment()
-
-        val intent = intent
-        val bundle = Bundle()
-        bundle.putDouble("lat", intent.getDoubleExtra("lat", Constants.LATITUDE_DEFAULT))
-        bundle.putDouble("lon", intent.getDoubleExtra("lon", Constants.LONGITUDE_DEFAULT))
-        bundle.putString("roadAddr", intent.getStringExtra("roadAddr"))
-        homeFragment.arguments = bundle
 
         transaction = fragmentManager.beginTransaction()
         val frameLayoutId = R.id.frameLayout

@@ -5,6 +5,11 @@ plugins {
     id 'kotlin-kapt'
 }
 
+// 출처: https://s2choco.tistory.com/23
+def lunchPropertiesFile = rootProject.file("lunch.properties")
+def lunchProperties = new Properties()
+lunchProperties.load(new FileInputStream(lunchPropertiesFile))
+
 android {
     compileSdkVersion 29
     buildToolsVersion "30.0.3"
@@ -22,6 +27,15 @@ android {
         ndk {
             abiFilters 'arm64-v8a', 'armeabi', 'armeabi-v7a'
         }
+        // xml file
+        // resValue "string", "CLIENT_ID", apiKeyProperties['CLIENT_ID']
+        // resValue "string", "CLIENT_SECRET", apiKeyProperties['CLIENT_SECRET']
+
+        // java file
+        buildConfigField("String", "BASE_URL", lunchProperties['BASE_URL'])
+        buildConfigField("String", "OPEN_API_ROAD_ADDRESS_KEY", lunchProperties['OPEN_API_ROAD_ADDRESS_KEY'])
+        buildConfigField("String", "OPEN_API_LOCATION_KEY", lunchProperties['OPEN_API_LOCATION_KEY'])
+        buildConfigField("String", "AWS_COGNITO_CREDENTIAL_POOL_ID", lunchProperties['AWS_COGNITO_CREDENTIAL_POOL_ID'])
     }
 
     buildTypes {

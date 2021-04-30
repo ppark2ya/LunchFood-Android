@@ -55,7 +55,7 @@ class KakaoLoginActivity: BaseActivity(TransitionMode.HORIZON) {
                                     val intent = Intent(this, AddressMappingActivity::class.java)
                                     startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                                 } else {
-                                    Toast.makeText(this@KakaoLoginActivity, "로그인에 실패했습니다.", Toast.LENGTH_SHORT)
+                                    Toast.makeText(this@KakaoLoginActivity, "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }

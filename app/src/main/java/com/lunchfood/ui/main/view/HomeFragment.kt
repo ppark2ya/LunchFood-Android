@@ -46,11 +46,10 @@ class HomeFragment: BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val extra = arguments
-        if(extra != null) {
-            userLat = extra.getDouble("lat")
-            userLon = extra.getDouble("lon")
-            roadAddr = extra.getString("roadAddr", "")
+        GlobalApplication.mUserData.let {
+            userLat = it.lat!!.toDouble()
+            userLon = it.lon!!.toDouble()
+            roadAddr = it.address!!
         }
 
         return inflater.inflate(R.layout.fragment_home, container, false)

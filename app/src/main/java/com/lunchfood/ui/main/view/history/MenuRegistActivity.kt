@@ -6,7 +6,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
@@ -29,11 +31,11 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.google.android.material.snackbar.Snackbar
+import com.lunchfood.BuildConfig.AWS_COGNITO_CREDENTIAL_POOL_ID
 import com.lunchfood.R
 import com.lunchfood.data.model.history.HistoryResponse
 import com.lunchfood.data.model.history.PlaceInfo
 import com.lunchfood.ui.base.BaseActivity
-import com.lunchfood.utils.Constants.Companion.AWS_COGNITO_CREDENTIAL_POOL_ID
 import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.PreferenceManager
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -178,11 +180,32 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             }
             PICK_IMAGE_CHOOSER_REQUEST_CODE -> {
                 if(resultCode == RESULT_OK) {
-                    Dlog.i("camera return:: ${data?.data}")
-                    // mOutputFileUri
-                    score1.setImageURI(mOutputFileUri)
-                    data?.data?.let {
-                        score1.setImageURI(it)
+                    if(data?.data != null) {
+                        // 이미지 1장 처리시
+                        Dlog.i("camera return:: ${data.data}")
+                        data.data?.let {
+                            score1.setImageURI(it)
+                        }
+                    } else if(data?.clipData != null) {
+                        // 이미지 여러 장 선택시 처리
+                        val count = data.clipData!!.itemCount
+                        if(count > 5) {
+                            Toast.makeText(this, "5장 이상 업로드할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                            return
+                        }
+                        for(i in 0 until count) {
+                            val imageUri = data.clipData!!.getItemAt(i).uri
+                        }
+                    } else {
+                        // 카메라 촬영 이미지 처리
+                        mOutputFileUri?.let {
+                            val bitmap = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, it))
+                            } else {
+                                MediaStore.Images.Media.getBitmap(contentResolver, it)
+                            }
+                            score1.setImageBitmap(bitmap)
+                        }
                     }
                 }
             }

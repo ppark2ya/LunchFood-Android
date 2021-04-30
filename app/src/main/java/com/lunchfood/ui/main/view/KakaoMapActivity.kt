@@ -149,7 +149,7 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
                                     val intent = Intent(this, BridgeActivity::class.java)
                                     startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                                 } else {
-                                    Toast.makeText(this@KakaoMapActivity, "사용자 정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT)
+                                    Toast.makeText(this@KakaoMapActivity, getString(R.string.user_update_fail_msg), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }

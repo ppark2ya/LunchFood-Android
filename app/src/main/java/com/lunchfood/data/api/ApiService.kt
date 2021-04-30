@@ -1,6 +1,7 @@
 package com.lunchfood.data.api
 
 import com.lunchfood.data.model.*
+import com.lunchfood.data.model.filter.FilterCommonRequest
 import com.lunchfood.data.model.history.HistoryParam
 import com.lunchfood.data.model.history.HistoryRequest
 import com.lunchfood.data.model.history.HistoryResponse
@@ -105,4 +106,54 @@ interface ApiService {
      */
     @POST("/history/food_auto")
     suspend fun getFoodAuto(@Body data: CommonParam): RetrofitResponse<List<String>>
+
+    /**
+     * @param id: 계정 식별자
+     * @param place_id: 카카오 api에서 넘어온 식당 식별자
+     * @param place_name: 식당이름
+     * @desc 선호 음식점 입력
+     */
+    @POST("/filter/insert_selected_place")
+    suspend fun insertSelectedPlace(@Body data: FilterCommonRequest): RetrofitResponse<Any>
+
+    /**
+     * @param id: 계정 식별자
+     * @param radius: 거리 필터링 값 (on=0 일때, 0값 입력하면 됨)
+     * @param on: 필터링 사용 여부 (0:비활성, 1:활성)
+     * @desc 계정 정보에 위치 정보 업데이트
+     */
+    @POST("/filter/update_radius")
+    suspend fun updateRadius(@Body data: FilterCommonRequest): RetrofitResponse<Any>
+
+    /**
+     * @param id: 계정 식별자
+     * @param set_date: 제한 일자 필터링 값 (on=0 일때, 0값 입력하면 됨)
+     * @param on: 필터링 사용 여부 (0:비활성, 1:활성)
+     * @desc 계정 정보에 제한 일자 정보 업데이트
+     */
+    @POST("/filter/update_date")
+    suspend fun updateDate(@Body data: FilterCommonRequest): RetrofitResponse<Any>
+
+    /**
+     * @param id: 계정 식별자
+     * @param on: 필터링 사용 여부 (0:비활성, 1:활성)
+     * @desc 계정 정보에 음식점 필터링 정보 업데이트
+     */
+    @POST("/filter/update_place")
+    suspend fun updatePlace(@Body data: FilterCommonRequest): RetrofitResponse<Any>
+
+    /**
+     * @param id: 계정 식별자
+     * @desc 음식점 필터링 정보 반환
+     */
+    @POST("/filter/getSelectedPlace")
+    suspend fun getSelectedPlace(@Body data: FilterCommonRequest): RetrofitResponse<List<Any>>
+
+    /**
+     * @param id: 계정 식별자
+     * @param place_id: 음식점 식별자
+     * @desc 음식점 필터링 정보 삭제
+     */
+    @POST("/filter/delete_selected_place")
+    suspend fun deleteSelectedPlace(@Body data: FilterCommonRequest): RetrofitResponse<Any>
 }
