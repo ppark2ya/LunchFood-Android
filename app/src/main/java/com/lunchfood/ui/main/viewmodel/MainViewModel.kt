@@ -111,28 +111,10 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
         }
     }
 
-    fun updateRadius(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
+    fun updateFilter(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
         emit(Resource.pending(data = null))
         try {
-            emit(Resource.success(data = mainRepository.updateRadius(data)))
-        } catch (exception: Exception) {
-            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
-        }
-    }
-
-    fun updateDate(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
-        emit(Resource.pending(data = null))
-        try {
-            emit(Resource.success(data = mainRepository.updateDate(data)))
-        } catch (exception: Exception) {
-            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
-        }
-    }
-
-    fun updatePlace(data: FilterCommonRequest) = liveData(Dispatchers.IO) {
-        emit(Resource.pending(data = null))
-        try {
-            emit(Resource.success(data = mainRepository.updatePlace(data)))
+            emit(Resource.success(data = mainRepository.updateFilter(data)))
         } catch (exception: Exception) {
             emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
         }

@@ -19,9 +19,7 @@ class MainRepository(private val apiHelper: ApiHelper) {
     suspend fun getPlaceAuto(data: CommonParam) = apiHelper.getPlaceAuto(data)
     suspend fun getFoodAuto(data: CommonParam) = apiHelper.getFoodAuto(data)
     suspend fun insertSelectedPlace(data: FilterCommonRequest) = apiHelper.insertSelectedPlace(data)
-    suspend fun updateRadius(data: FilterCommonRequest) = apiHelper.updateRadius(data)
-    suspend fun updateDate(data: FilterCommonRequest) = apiHelper.updateDate(data)
-    suspend fun updatePlace(data: FilterCommonRequest) = apiHelper.updatePlace(data)
+    suspend fun updateFilter(data: FilterCommonRequest) = apiHelper.updateFilter(data)
     suspend fun getSelectedPlace(data: FilterCommonRequest) = apiHelper.getSelectedPlace(data)
     suspend fun deleteSelectedPlace(data: FilterCommonRequest) = apiHelper.deleteSelectedPlace(data)
 }

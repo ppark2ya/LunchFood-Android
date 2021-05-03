@@ -25,6 +25,7 @@
             android:layout_marginBottom="5dp"
             android:orientation="horizontal">
             <TextView
+                android:id="@+id/tvRadius1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -41,6 +42,7 @@
                 android:layout_marginEnd="10dp"
                 android:spinnerMode="dropdown"/>
             <TextView
+                android:id="@+id/tvRad2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -50,17 +52,18 @@
                 android:text="까지 검색할래요!" />
         </LinearLayout>
         <androidx.cardview.widget.CardView
-            android:id="@+id/cvUserRadiusBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             app:cardCornerRadius="8dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp">
             <RelativeLayout
+                android:id="@+id/rlUserRadiusBtn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/lunch_red">
                 <TextView
+                    android:id="@+id/tvUserRadius"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -97,17 +100,18 @@
                 app:drawableEndCompat="@drawable/right_arrow" />
         </LinearLayout>
         <androidx.cardview.widget.CardView
-            android:id="@+id/cvLimitRecommendBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             app:cardCornerRadius="8dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp">
             <RelativeLayout
+                android:id="@+id/rlLimitRecommendBtn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/lunch_red">
                 <TextView
+                    android:id="@+id/tvLimitRecommend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -140,6 +144,7 @@
                 android:layout_marginEnd="10dp"
                 android:spinnerMode="dropdown"/>
             <TextView
+                android:id="@+id/tvDup1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -149,17 +154,18 @@
                 android:text="동안 안먹은 것만 추천받을래요!" />
         </LinearLayout>
         <androidx.cardview.widget.CardView
-            android:id="@+id/cvDuplicatedMealBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             app:cardCornerRadius="8dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp">
             <RelativeLayout
+                android:id="@+id/rlDuplicatedIntervalBtn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/lunch_red">
                 <TextView
+                    android:id="@+id/tvDuplicatedInterval"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -177,6 +183,31 @@
             android:layout_height="15dp"
             android:background="@drawable/line_border"
             android:orientation="horizontal" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvFilterUpdateBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:cardCornerRadius="8dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="10dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/lunch_red">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:drawablePadding="15dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:text="저장하기"
+                    app:drawableLeftCompat="@drawable/left_fire_customize" />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

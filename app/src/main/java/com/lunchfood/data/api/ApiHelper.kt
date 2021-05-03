@@ -19,9 +19,7 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun getPlaceAuto(data: CommonParam) = apiService.getPlaceAuto(data)
     suspend fun getFoodAuto(data: CommonParam) = apiService.getFoodAuto(data)
     suspend fun insertSelectedPlace(data: FilterCommonRequest) = apiService.insertSelectedPlace(data)
-    suspend fun updateRadius(data: FilterCommonRequest) = apiService.updateRadius(data)
-    suspend fun updateDate(data: FilterCommonRequest) = apiService.updateDate(data)
-    suspend fun updatePlace(data: FilterCommonRequest) = apiService.updatePlace(data)
+    suspend fun updateFilter(data: FilterCommonRequest) = apiService.updateFilter(data)
     suspend fun getSelectedPlace(data: FilterCommonRequest) = apiService.getSelectedPlace(data)
     suspend fun deleteSelectedPlace(data: FilterCommonRequest) = apiService.deleteSelectedPlace(data)
 }

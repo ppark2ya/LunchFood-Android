@@ -2,6 +2,7 @@ package com.lunchfood.data.api
 
 import com.lunchfood.data.model.*
 import com.lunchfood.data.model.filter.FilterCommonRequest
+import com.lunchfood.data.model.filter.SelectedPlace
 import com.lunchfood.data.model.history.HistoryParam
 import com.lunchfood.data.model.history.HistoryRequest
 import com.lunchfood.data.model.history.HistoryResponse
@@ -119,35 +120,21 @@ interface ApiService {
     /**
      * @param id: 계정 식별자
      * @param radius: 거리 필터링 값 (on=0 일때, 0값 입력하면 됨)
-     * @param on: 필터링 사용 여부 (0:비활성, 1:활성)
-     * @desc 계정 정보에 위치 정보 업데이트
+     * @param radius_on: 거리 제한 필터 (0:비활성, 1:활성)
+     * @param place_on: 식당 필터 (0:비활성, 1:활성)
+     * @param set_date: 제한 일자
+     * @param date_on: 제한 일자 필터 (0:비활성, 1:활성)
+     * @desc 계정 정보에 필터링 정보 업데이트
      */
-    @POST("/filter/update_radius")
-    suspend fun updateRadius(@Body data: FilterCommonRequest): RetrofitResponse<Any>
-
-    /**
-     * @param id: 계정 식별자
-     * @param set_date: 제한 일자 필터링 값 (on=0 일때, 0값 입력하면 됨)
-     * @param on: 필터링 사용 여부 (0:비활성, 1:활성)
-     * @desc 계정 정보에 제한 일자 정보 업데이트
-     */
-    @POST("/filter/update_date")
-    suspend fun updateDate(@Body data: FilterCommonRequest): RetrofitResponse<Any>
-
-    /**
-     * @param id: 계정 식별자
-     * @param on: 필터링 사용 여부 (0:비활성, 1:활성)
-     * @desc 계정 정보에 음식점 필터링 정보 업데이트
-     */
-    @POST("/filter/update_place")
-    suspend fun updatePlace(@Body data: FilterCommonRequest): RetrofitResponse<Any>
+    @POST("/filter/update_filter")
+    suspend fun updateFilter(@Body data: FilterCommonRequest): RetrofitResponse<Any>
 
     /**
      * @param id: 계정 식별자
      * @desc 음식점 필터링 정보 반환
      */
-    @POST("/filter/getSelectedPlace")
-    suspend fun getSelectedPlace(@Body data: FilterCommonRequest): RetrofitResponse<List<Any>>
+    @POST("/filter/get_selected_place")
+    suspend fun getSelectedPlace(@Body data: FilterCommonRequest): RetrofitResponse<List<SelectedPlace>>
 
     /**
      * @param id: 계정 식별자

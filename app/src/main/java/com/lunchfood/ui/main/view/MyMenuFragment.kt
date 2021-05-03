@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.*
+import androidx.core.content.ContextCompat
 import com.lunchfood.R
 import com.lunchfood.data.model.filter.FilterCommonRequest
-import com.lunchfood.data.model.history.HistoryParam
-import com.lunchfood.data.model.history.HistoryResponse
 import com.lunchfood.ui.base.BaseFragment
 import com.lunchfood.ui.base.GlobalApplication
 import com.lunchfood.utils.Dlog
@@ -20,8 +18,11 @@ import kotlinx.android.synthetic.main.fragment_mymenu.*
 class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     private val mainViewModel by lazy { GlobalApplication.getViewModel() }
-    private var mUserRadius = 500
-    private var mDuplicatedInterval = 7
+    private var mUserRadius = GlobalApplication.mUserData.radius
+    private var mDuplicatedInterval = GlobalApplication.mUserData.setDate
+    private var mRadiusOn = GlobalApplication.mUserData.radiusOn
+    private var mPlaceOn = GlobalApplication.mUserData.placeOn
+    private var mDateOn = GlobalApplication.mUserData.dateOn
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,23 +36,38 @@ class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener, View.O
         super.onViewCreated(view, savedInstanceState)
         mainActivity.run { setCommonHeaderText(getString(R.string.my_menu), view) }
 
-        // resources.getStringArray(R.array.user_radius)
         val userRadiusAdapter = ArrayAdapter.createFromResource(mainActivity, R.array.user_radius, R.layout.spinner_item)
         userRadiusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spUserRadius.adapter = userRadiusAdapter
-        spUserRadius.setSelection(4)
+        spUserRadius.setSelection(getRadiusSpinnerIndex(mUserRadius))
         spUserRadius.onItemSelectedListener = this
 
-        val duplicatedMealAdapter = ArrayAdapter.createFromResource(mainActivity, R.array.duplicated_interval, R.layout.spinner_item)
-        duplicatedMealAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spDuplicatedInterval.adapter = duplicatedMealAdapter
-        spDuplicatedInterval.setSelection(6)
+        val duplicatedIntervalAdapter = ArrayAdapter.createFromResource(mainActivity, R.array.duplicated_interval, R.layout.spinner_item)
+        duplicatedIntervalAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spDuplicatedInterval.adapter = duplicatedIntervalAdapter
+        spDuplicatedInterval.setSelection(mDuplicatedInterval - 1)
         spDuplicatedInterval.onItemSelectedListener = this
 
+        setupUI()
+
         tvMyPlaceList.setOnClickListener(this)
-        cvUserRadiusBtn.setOnClickListener(this)
-        cvLimitRecommendBtn.setOnClickListener(this)
-        cvDuplicatedMealBtn.setOnClickListener(this)
+        rlUserRadiusBtn.setOnClickListener(this)
+        rlLimitRecommendBtn.setOnClickListener(this)
+        rlDuplicatedIntervalBtn.setOnClickListener(this)
+        cvFilterUpdateBtn.setOnClickListener(this)
+    }
+
+    private fun setupUI() {
+        toggleSpinnerUI(spUserRadius, mRadiusOn)
+        toggleSpinnerUI(spDuplicatedInterval, mDateOn)
+
+        toggleButtonUI(rlUserRadiusBtn, tvUserRadius, mRadiusOn)
+        toggleButtonUI(rlLimitRecommendBtn, tvLimitRecommend, mPlaceOn)
+        toggleButtonUI(rlDuplicatedIntervalBtn, tvDuplicatedInterval, mDateOn)
+
+        tvRadius1.setTextColor(getCommentColor(mRadiusOn))
+        tvRad2.setTextColor(getCommentColor(mRadiusOn))
+        tvDup1.setTextColor(getCommentColor(mDateOn))
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -89,77 +105,24 @@ class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener, View.O
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}
 
-    private fun updateRadius(data: FilterCommonRequest) {
+    private fun updateFilter(data: FilterCommonRequest) {
         mainViewModel?.run {
-            updateRadius(data).observe(viewLifecycleOwner, {
+            updateFilter(data).observe(viewLifecycleOwner, {
                 it.let { resource ->
                     when(resource.status) {
-                        Status.PENDING -> {
-                            mainActivity.loadingStart()
-                        }
+                        Status.PENDING -> {}
                         Status.SUCCESS -> {
-                            mainActivity.loadingEnd()
                             resource.data?.let { res ->
                                 if(res.resultCode == 200) {
-
+                                    Toast.makeText(mainActivity, getString(R.string.filter_update_success), Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(mainActivity, getString(R.string.filter_update_fail), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
                         Status.FAILURE -> {
-                            mainActivity.loadingEnd()
-                            Dlog.e("updateRadius FAILURE : ${it.message}")
-                        }
-                    }
-                }
-            })
-        }
-    }
-
-    private fun updateDate(data: FilterCommonRequest) {
-        mainViewModel?.run {
-            updateDate(data).observe(viewLifecycleOwner, {
-                it.let { resource ->
-                    when(resource.status) {
-                        Status.PENDING -> {
-                            mainActivity.loadingStart()
-                        }
-                        Status.SUCCESS -> {
-                            mainActivity.loadingEnd()
-                            resource.data?.let { res ->
-                                if(res.resultCode == 200) {
-
-                                }
-                            }
-                        }
-                        Status.FAILURE -> {
-                            mainActivity.loadingEnd()
-                            Dlog.e("updateDate FAILURE : ${it.message}")
-                        }
-                    }
-                }
-            })
-        }
-    }
-
-    private fun updatePlace(data: FilterCommonRequest) {
-        mainViewModel?.run {
-            updatePlace(data).observe(viewLifecycleOwner, {
-                it.let { resource ->
-                    when(resource.status) {
-                        Status.PENDING -> {
-                            mainActivity.loadingStart()
-                        }
-                        Status.SUCCESS -> {
-                            mainActivity.loadingEnd()
-                            resource.data?.let { res ->
-                                if(res.resultCode == 200) {
-
-                                }
-                            }
-                        }
-                        Status.FAILURE -> {
-                            mainActivity.loadingEnd()
-                            Dlog.e("updatePlace FAILURE : ${it.message}")
+                            Dlog.e("updateFilter FAILURE : ${it.message}")
+                            Toast.makeText(mainActivity, getString(R.string.filter_update_fail), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -170,12 +133,114 @@ class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener, View.O
     override fun onClick(v: View?) {
         when(v?.id) {
             R.id.tvMyPlaceList -> {
-                val intent = Intent(mainActivity, MyPlaceActivity::class.java)
-                startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), 0)
+                if(mPlaceOn == 1) {
+                    val intent = Intent(mainActivity, MyPlaceActivity::class.java)
+                    startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), 0)
+                }
             }
-            R.id.cvUserRadiusBtn -> {}
-            R.id.cvLimitRecommendBtn -> {}
-            R.id.cvDuplicatedMealBtn -> {}
+            R.id.rlUserRadiusBtn -> {
+                mRadiusOn = toggleButtonState(mRadiusOn)
+                toggleSpinnerUI(spUserRadius, mRadiusOn)
+                toggleButtonUI(rlUserRadiusBtn, tvUserRadius, mRadiusOn)
+                tvRadius1.setTextColor(getCommentColor(mRadiusOn))
+                tvRad2.setTextColor(getCommentColor(mRadiusOn))
+            }
+            R.id.rlLimitRecommendBtn -> {
+                mPlaceOn = toggleButtonState(mPlaceOn)
+                toggleButtonUI(rlLimitRecommendBtn, tvLimitRecommend, mPlaceOn)
+                tvMyPlaceList.setTextColor(getCommentColor(mPlaceOn))
+            }
+            R.id.rlDuplicatedIntervalBtn -> {
+                mDateOn = toggleButtonState(mDateOn)
+                toggleSpinnerUI(spDuplicatedInterval, mDateOn)
+                toggleButtonUI(rlDuplicatedIntervalBtn, tvDuplicatedInterval, mDateOn)
+                tvDup1.setTextColor(getCommentColor(mDateOn))
+            }
+            R.id.cvFilterUpdateBtn -> {
+                updateFilter(
+                    FilterCommonRequest(
+                        id = userId,
+                        radius = mUserRadius,
+                        radiusOn = mRadiusOn,
+                        placeOn = mPlaceOn,
+                        setDate = mDuplicatedInterval,
+                        dateOn = mDateOn
+                    )
+                )
+            }
+        }
+    }
+
+    private fun getRadiusSpinnerIndex(userRadius: Int): Int {
+        return when(userRadius) {
+            100 -> 0
+            200 -> 1
+            300 -> 2
+            400 -> 3
+            500 -> 4
+            600 -> 5
+            700 -> 6
+            800 -> 7
+            900 -> 8
+            else ->  9
+        }
+    }
+
+    private fun toggleSpinnerUI(spinner: Spinner, state: Int) {
+        when(state) {
+            0 -> {
+                spinner.isEnabled = false
+                spinner.isClickable = false
+                val resourceId = resources.getIdentifier("spinner_disabled_background", "drawable", requireContext().packageName)
+                spinner.background = ContextCompat.getDrawable(requireContext(), resourceId)
+            }
+            else -> {
+                spinner.isEnabled = true
+                spinner.isClickable = true
+                val resourceId = resources.getIdentifier("spinner_background", "drawable", requireContext().packageName)
+                spinner.background = ContextCompat.getDrawable(requireContext(), resourceId)
+            }
+        }
+    }
+
+    private fun toggleButtonUI(relativeLayout: RelativeLayout, textView: TextView, state: Int) {
+        relativeLayout.setBackgroundColor(getButtonColor(state))
+        textView.setTextColor(getTextColor(state))
+        textView.setCompoundDrawablesWithIntrinsicBounds(getFireIcon(state), 0, 0, 0)
+    }
+
+    private fun toggleButtonState(state: Int): Int {
+        return when(state) {
+            0 -> 1
+            else -> 0
+        }
+    }
+
+    private fun getButtonColor(state: Int): Int {
+        return when(state) {
+            0 -> ContextCompat.getColor(mainActivity, R.color.button_disabled)
+            else -> ContextCompat.getColor(mainActivity, R.color.lunch_red)
+        }
+    }
+
+    private fun getTextColor(state: Int): Int {
+        return when(state) {
+            0 -> ContextCompat.getColor(mainActivity, R.color.gray)
+            else -> ContextCompat.getColor(mainActivity, R.color.white)
+        }
+    }
+
+    private fun getCommentColor(state: Int): Int {
+        return when(state) {
+            0 -> ContextCompat.getColor(mainActivity, R.color.gray)
+            else -> ContextCompat.getColor(mainActivity, R.color.black)
+        }
+    }
+
+    private fun getFireIcon(state: Int): Int {
+        return when(state) {
+            0 -> R.drawable.left_gray_fire_customize
+            else -> R.drawable.left_fire_customize
         }
     }
 }

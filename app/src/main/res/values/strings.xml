@@ -45,4 +45,6 @@
     <string name="suggest_camera_permission_grant">카메라 기능을 사용하기 위해서는 권한이 필요합니다.</string>
     <string name="suggest_file_permission_grant">파일에 접근하기 위해서는 권한이 필요합니다.</string>
     <string name="user_update_fail_msg">사용자 정보 업데이트에 실패했습니다.</string>
+    <string name="filter_update_success">내 점심줄이 변경되었습니다.</string>
+    <string name="filter_update_fail">내 점심줄 변경에 실패했습니다.</string>
 </resources>

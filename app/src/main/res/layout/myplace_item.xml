@@ -20,15 +20,22 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/road_border">
                 <TextView
+                    android:id="@+id/tvMyFavPlaceName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:drawablePadding="15dp"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    android:text="@string/my_place_regist"
-                    android:paddingHorizontal="20dp"
-                    app:drawableRightCompat="@drawable/ic_myplace_remove" />
+                    android:paddingHorizontal="20dp" />
+                <ImageView
+                    android:id="@+id/ivMyFavoritePlaceDeleteBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    app:srcCompat="@drawable/ic_myplace_remove" />
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
