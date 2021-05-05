@@ -45,7 +45,7 @@ class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener, View.O
         val duplicatedIntervalAdapter = ArrayAdapter.createFromResource(mainActivity, R.array.duplicated_interval, R.layout.spinner_item)
         duplicatedIntervalAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spDuplicatedInterval.adapter = duplicatedIntervalAdapter
-        spDuplicatedInterval.setSelection(mDuplicatedInterval - 1)
+        spDuplicatedInterval.setSelection(getIntervalSpinnerIndex(mDuplicatedInterval))
         spDuplicatedInterval.onItemSelectedListener = this
 
         setupUI()
@@ -182,6 +182,21 @@ class MyMenuFragment: BaseFragment(), AdapterView.OnItemSelectedListener, View.O
             700 -> 6
             800 -> 7
             900 -> 8
+            else ->  9
+        }
+    }
+
+    private fun getIntervalSpinnerIndex(userRadius: Int): Int {
+        return when(userRadius) {
+            1 -> 0
+            2 -> 1
+            3 -> 2
+            4 -> 3
+            5 -> 4
+            6 -> 5
+            7 -> 6
+            14 -> 7
+            21 -> 8
             else ->  9
         }
     }
