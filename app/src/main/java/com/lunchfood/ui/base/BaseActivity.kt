@@ -16,7 +16,9 @@ import com.lunchfood.R
 import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.api.RetrofitBuilder
 import com.lunchfood.ui.main.viewmodel.MainViewModel
+import com.lunchfood.utils.KeyboardVisibilityUtils
 import com.lunchfood.utils.PreferenceManager
+import kotlinx.android.synthetic.main.activity_menu_regist.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,6 +36,7 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
     private lateinit var job: Job
     private lateinit var viewModel: MainViewModel
     val userId by lazy { PreferenceManager.getLong("userId") }
+    private lateinit var keyboardVisibilityUtils: KeyboardVisibilityUtils
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -58,6 +61,18 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
             it.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
+        /**
+         * @desc 키보드가 올라왔을 떄 자동으로 스크롤 up
+         *  1. AndroidManifest.xml -> activity -> android:windowSoftInputMode="adjustResize" 필요
+         *  2. activity_~.xml 루트 layout에 android:fitsSystemWindows="true" 속성 필요
+         */
+        keyboardVisibilityUtils = KeyboardVisibilityUtils(window,
+            onShowKeyboard = { keyboardHeight ->
+                svMenuRegist.run {
+                    smoothScrollTo(scrollX, scrollY + keyboardHeight)
+                }
+            }
+        )
 
         setupViewModel()
     }
@@ -84,8 +99,9 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         job.cancel()
+        keyboardVisibilityUtils.detachKeyboardListeners()
+        super.onDestroy()
     }
 
     private fun setupViewModel() {

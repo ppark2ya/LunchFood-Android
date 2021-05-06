@@ -17,7 +17,6 @@
             android:id="@+id/headerBackBtn"
             android:layout_width="wrap_content"
             android:layout_height="16dp"
-            android:layout_gravity="left"
             android:layout_marginTop="4dp"
             android:visibility="visible"
             app:srcCompat="@drawable/back_arrow" />

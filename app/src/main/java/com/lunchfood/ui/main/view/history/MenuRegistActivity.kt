@@ -37,8 +37,10 @@ import com.lunchfood.data.model.history.HistoryResponse
 import com.lunchfood.data.model.history.PlaceInfo
 import com.lunchfood.ui.base.BaseActivity
 import com.lunchfood.utils.Dlog
+import com.lunchfood.utils.KeyboardVisibilityUtils
 import com.lunchfood.utils.PreferenceManager
 import com.prolificinteractive.materialcalendarview.CalendarDay
+import kotlinx.android.synthetic.main.activity_address_setting.*
 import kotlinx.android.synthetic.main.activity_menu_regist.*
 import kotlinx.android.synthetic.main.header.*
 import org.threeten.bp.LocalDate
@@ -50,7 +52,7 @@ import kotlin.collections.ArrayList
 
 class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickListener, View.OnTouchListener {
 
-    private val mDayMenu by lazy { intent.getSerializableExtra("dayMenu") as HistoryResponse }
+    private val mDayMenu by lazy { intent.getSerializableExtra("dayMenu") as HistoryResponse? }
     private var mScore = 0
     private var mPlaceInfo: PlaceInfo? = null
     private var mFoodName: String? = ""
@@ -70,10 +72,10 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu_regist)
         setCommonHeaderText(getString(R.string.day_menu_regist))
-
         Dlog.i("데이메뉴::: $mDayMenu")
-
         setupDayMenu()
+        // android:fitsSystemWindows="true" 넣으니까 위에 statusbar 영역에 패딩이 추가로 먹는듯...
+        window.decorView.setPadding(0, 0, 0, 0)
 
         headerBackBtn.setOnClickListener(this)
         score1.setOnClickListener(this)
@@ -213,16 +215,18 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     }
 
     private fun setupDayMenu() {
-        val convertDate = CalendarDay.from(LocalDate.parse(mDayMenu.insertedDate))
-        tvCurrentDate.text = getString(R.string.dayMenuDate, convertDate.year, convertDate.month, convertDate.day)
-        etImageUpload.inputType = InputType.TYPE_NULL
-        etHistoryPlaceName.let {
-            it.setText(mDayMenu.placeName)
-            it.inputType = InputType.TYPE_NULL
-        }
-        etHistoryMenuName.let {
-            it.setText(mDayMenu.menuName)
-            it.inputType = InputType.TYPE_NULL
+        mDayMenu?.let { dayMenu ->
+            val convertDate = CalendarDay.from(LocalDate.parse(dayMenu.insertedDate))
+            tvCurrentDate.text = getString(R.string.dayMenuDate, convertDate.year, convertDate.month, convertDate.day)
+            etImageUpload.inputType = InputType.TYPE_NULL
+            etHistoryPlaceName.let {
+                it.setText(dayMenu.placeName)
+                it.inputType = InputType.TYPE_NULL
+            }
+            etHistoryMenuName.let {
+                it.setText(dayMenu.menuName)
+                it.inputType = InputType.TYPE_NULL
+            }
         }
     }
 

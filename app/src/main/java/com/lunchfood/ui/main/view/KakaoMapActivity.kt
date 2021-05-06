@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import com.lunchfood.BuildConfig
 import com.lunchfood.R
 import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.api.RetrofitBuilder
@@ -91,7 +92,7 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
 
     private suspend fun setupAddress() {
         delay(1000)
-        mReverseGeoCoder = MapReverseGeoCoder(getString(R.string.kakao_app_key), mMapView.mapCenterPoint, this@KakaoMapActivity, this@KakaoMapActivity)
+        mReverseGeoCoder = MapReverseGeoCoder(BuildConfig.KAKAO_APP_KEY, mMapView.mapCenterPoint, this@KakaoMapActivity, this@KakaoMapActivity)
         mReverseGeoCoder.startFindingAddress()
     }
 

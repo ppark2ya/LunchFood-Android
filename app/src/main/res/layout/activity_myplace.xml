@@ -43,7 +43,7 @@
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -59,7 +59,7 @@
                     android:layout_height="match_parent"
                     android:visibility="gone"/>
             </RelativeLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

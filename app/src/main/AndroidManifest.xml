@@ -22,6 +22,7 @@
         android:theme="@style/Theme.LunchFood"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
+        android:hardwareAccelerated="true"
         android:name=".ui.base.GlobalApplication">
 
         <provider
@@ -34,7 +35,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key"/>
+        <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/KAKAO_APP_KEY"/>
 
         <activity android:name=".ui.main.view.IntroActivity" android:screenOrientation="portrait">
             <intent-filter>
@@ -42,12 +43,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.view.KakaoLoginActivity" android:screenOrientation="portrait" />
-        <activity android:name=".ui.main.view.AddressMappingActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ui.main.view.KakaoLoginActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.main.view.AddressMappingActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.main.view.KakaoMapActivity" android:screenOrientation="portrait"/>
         <activity android:name=".ui.main.view.BridgeActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.main.view.MainActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.main.view.history.MenuRegistActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.main.view.MainActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ui.main.view.history.MenuRegistActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.main.view.history.PlaceSearchActivity" android:screenOrientation="portrait"/>
         <activity android:name=".ui.main.view.history.MenuSearchActivity" android:screenOrientation="portrait"/>
         <activity android:name=".ui.main.view.MyPlaceActivity" android:screenOrientation="portrait"/>
@@ -56,7 +60,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="oauth" android:scheme="@string/kakao_app_key" />
+                <data android:host="oauth" android:scheme="@string/KAKAO_APP_KEY" />
             </intent-filter>
         </activity>
         <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />

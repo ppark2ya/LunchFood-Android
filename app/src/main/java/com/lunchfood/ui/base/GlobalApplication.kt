@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kakao.sdk.common.KakaoSdk
+import com.lunchfood.BuildConfig
 import com.lunchfood.R
 import com.lunchfood.data.model.User
 import com.lunchfood.ui.main.viewmodel.MainViewModel
@@ -37,7 +38,7 @@ class GlobalApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        KakaoSdk.init(this, getString(R.string.kakao_app_key))
+        KakaoSdk.init(this, BuildConfig.KAKAO_APP_KEY)
         instance = this
     }
 
