@@ -5,23 +5,19 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.widget.RelativeLayout
+import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.core.content.ContextCompat
 import com.lunchfood.BuildConfig
 import com.lunchfood.R
-import com.lunchfood.data.api.ApiHelper
-import com.lunchfood.data.api.RetrofitBuilder
 import com.lunchfood.data.model.AddressRequest
 import com.lunchfood.data.model.User
 import com.lunchfood.ui.base.BaseActivity
 import com.lunchfood.ui.base.GlobalApplication
-import com.lunchfood.ui.base.ViewModelFactory
-import com.lunchfood.ui.main.viewmodel.MainViewModel
 import com.lunchfood.utils.CommonUtil
 import com.lunchfood.utils.Constants.Companion.LATITUDE_DEFAULT
 import com.lunchfood.utils.Constants.Companion.LONGITUDE_DEFAULT
 import com.lunchfood.utils.Dlog
-import com.lunchfood.utils.PreferenceManager
 import com.lunchfood.utils.Status
 import kotlinx.android.synthetic.main.activity_address_setting.*
 import kotlinx.android.synthetic.main.activity_kakao_map_custom.*
@@ -40,24 +36,25 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
     private lateinit var mMapView: MapView
     private lateinit var mapViewContainer: RelativeLayout
     private lateinit var mReverseGeoCoder: MapReverseGeoCoder
-    private lateinit var viewModel: MainViewModel
     private var mLat: Double = LATITUDE_DEFAULT
     private var mLon: Double = LONGITUDE_DEFAULT
     private var mAddress: String = ""
+    private var isEnable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_kakao_map_custom)
         setupMapView()
-        setupViewModel()
         GlobalScope.launch {
             setupAddress()
         }
 
         setUserAddrBtn.setOnClickListener {
-            updateLocation(
-                User(id = userId, lat = mLat.toString(), lon = mLon.toString(), address = mAddress, type = "WGS84")
-            )
+            if(isEnable) {
+                updateLocation(
+                    User(id = userId, lat = mLat.toString(), lon = mLon.toString(), address = mAddress, type = "WGS84")
+                )
+            }
         }
     }
 
@@ -96,43 +93,44 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
         mReverseGeoCoder.startFindingAddress()
     }
 
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-                this,
-                ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
-        ).get(MainViewModel::class.java)
-    }
-
     private fun getAddressList(addressParam: HashMap<String, Any>) {
-        viewModel.getAddressList(addressParam).observe(this, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.PENDING -> {
-                        Dlog.i("getAddressList PENDING")
-                    }
-                    Status.SUCCESS -> {
-                        resource.data?.let { res ->
-                            try {
-                                val addressCommonResult = res.results.common
-                                val addressJusoList = res.results.juso
+        mainViewModel?.let { model ->
+            model.getAddressList(addressParam).observe(this, {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.PENDING -> {
+                            Dlog.i("getAddressList PENDING")
+                        }
+                        Status.SUCCESS -> {
+                            resource.data?.let { res ->
+                                try {
+                                    val addressCommonResult = res.results.common
+                                    val addressJusoList = res.results.juso
 
-                                if (addressCommonResult.errorCode == "0") {
-                                    if (addressJusoList != null) {
-                                        tvRoadAddr.text = addressJusoList[0].roadAddr
-                                        tvJibunAddr.text = addressJusoList[0].jibunAddr
+                                    if (addressCommonResult.errorCode == "0") {
+                                        if(!addressJusoList.isNullOrEmpty()) {
+                                            tvRoadAddr.text = addressJusoList[0].roadAddr
+                                            tvJibunAddr.text = addressJusoList[0].jibunAddr
+                                            isEnable = true
+                                        } else {
+                                            tvRoadAddr.text = getString(R.string.get_address_failure)
+                                            tvJibunAddr.text = getString(R.string.address_direct_input_notify)
+                                            isEnable = false
+                                        }
+                                        toggleButtonUI(setUserAddrBtn, tvAddressSet, isEnable)
                                     }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
                             }
                         }
-                    }
-                    Status.FAILURE -> {
-                        Dlog.e("getAddressList FAILURE : ${it.message}")
+                        Status.FAILURE -> {
+                            Dlog.e("getAddressList FAILURE : ${it.message}")
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun updateLocation(data: User) {
@@ -200,5 +198,32 @@ class KakaoMapActivity : BaseActivity(), MapView.CurrentLocationEventListener, M
         super.onDestroy()
         mMapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
         mMapView.setShowCurrentLocationMarker(false)
+    }
+
+    private fun toggleButtonUI(relativeLayout: RelativeLayout, textView: TextView, state: Boolean) {
+        relativeLayout.setBackgroundColor(getButtonColor(state))
+        textView.setTextColor(getTextColor(state))
+        textView.setCompoundDrawablesWithIntrinsicBounds(getFireIcon(state), 0, 0, 0)
+    }
+
+    private fun getButtonColor(state: Boolean): Int {
+        return when(state) {
+            true -> ContextCompat.getColor(this, R.color.lunch_red)
+            else -> ContextCompat.getColor(this, R.color.button_disabled)
+        }
+    }
+
+    private fun getTextColor(state: Boolean): Int {
+        return when(state) {
+            true -> ContextCompat.getColor(this, R.color.white)
+            else -> ContextCompat.getColor(this, R.color.gray)
+        }
+    }
+
+    private fun getFireIcon(state: Boolean): Int {
+        return when(state) {
+            true -> R.drawable.left_fire_customize
+            else -> R.drawable.left_gray_fire_customize
+        }
     }
 }

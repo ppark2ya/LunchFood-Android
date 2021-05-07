@@ -19,7 +19,9 @@ import android.text.InputType
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -87,6 +89,11 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
         score3.setOnClickListener(this)
         score4.setOnClickListener(this)
         score5.setOnClickListener(this)
+        ibClose1.setOnClickListener(this)
+        ibClose2.setOnClickListener(this)
+        ibClose3.setOnClickListener(this)
+        ibClose4.setOnClickListener(this)
+        ibClose5.setOnClickListener(this)
         // 참고 : https://gist.github.com/Reacoder/0b316726564f85523251
         // EditText의 경우 이벤트리스너가 OnTouch -> OnFocusChange -> OnClick 순으로 실행되어 click의 경우 바로 안먹음
         etImageUpload.setOnTouchListener(this)
@@ -328,6 +335,9 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             R.id.ivHistoryMenuSearch -> {
                 val intent = Intent(this@MenuRegistActivity, MenuSearchActivity::class.java)
                 startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), MENU_SEARCH_REQUEST_CODE)
+            }
+            R.id.ibClose1, R.id.ibClose2, R.id.ibClose3, R.id.ibClose4, R.id.ibClose5 -> {
+                (v.parent as RelativeLayout).visibility = View.GONE
             }
         }
     }

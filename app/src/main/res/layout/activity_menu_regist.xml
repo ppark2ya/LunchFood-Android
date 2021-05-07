@@ -63,11 +63,12 @@
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"/>
                         <ImageButton
+                            android:id="@+id/ibClose1"
                             android:layout_width="10dp"
                             android:layout_height="10dp"
                             android:layout_alignParentTop="true"
                             android:layout_alignParentEnd="true"
-                            android:background="@drawable/ic_fire_gray"/>
+                            android:background="@drawable/ic_close"/>
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -79,11 +80,12 @@
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"/>
                         <ImageButton
+                            android:id="@+id/ibClose2"
                             android:layout_width="10dp"
                             android:layout_height="10dp"
                             android:layout_alignParentTop="true"
                             android:layout_alignParentEnd="true"
-                            android:background="@drawable/ic_fire_gray" />
+                            android:background="@drawable/ic_close" />
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -95,11 +97,12 @@
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"/>
                         <ImageButton
+                            android:id="@+id/ibClose3"
                             android:layout_width="10dp"
                             android:layout_height="10dp"
                             android:layout_alignParentTop="true"
                             android:layout_alignParentEnd="true"
-                            android:background="@drawable/ic_fire_gray"/>
+                            android:background="@drawable/ic_close"/>
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -111,11 +114,12 @@
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"/>
                         <ImageButton
+                            android:id="@+id/ibClose4"
                             android:layout_width="10dp"
                             android:layout_height="10dp"
                             android:layout_alignParentTop="true"
                             android:layout_alignParentEnd="true"
-                            android:background="@drawable/ic_fire_gray"/>
+                            android:background="@drawable/ic_close"/>
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -127,11 +131,12 @@
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"/>
                         <ImageButton
+                            android:id="@+id/ibClose5"
                             android:layout_width="10dp"
                             android:layout_height="10dp"
                             android:layout_alignParentTop="true"
                             android:layout_alignParentEnd="true"
-                            android:background="@drawable/ic_fire_gray"/>
+                            android:background="@drawable/ic_close"/>
                     </RelativeLayout>
                 </LinearLayout>
             </HorizontalScrollView>

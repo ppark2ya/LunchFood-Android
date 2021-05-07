@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.cardview.widget.CardView
 import com.lunchfood.R
 import com.lunchfood.data.model.BestMenu
 import com.lunchfood.data.model.BestMenuRequest
@@ -60,8 +59,7 @@ class HomeFragment: BaseFragment() {
         headerBackBtn.visibility = View.GONE
 
         mMapView = MapView(activity)
-        val mapViewContainer = view.findViewById<ViewGroup>(R.id.rlMainMapView)
-        mapViewContainer.addView(mMapView)
+        rlMainMapView.addView(mMapView)
 
         setUserLocation()
         setupEventListener(view)
@@ -71,11 +69,11 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupEventListener(view: View) {
-        view.findViewById<CardView>(R.id.nextPlace).setOnClickListener {
+        nextPlace.setOnClickListener {
             insertHistory(makeRequestBody(0))
         }
 
-        view.findViewById<CardView>(R.id.lunchChoice).setOnClickListener {
+        lunchChoice.setOnClickListener {
             insertHistory(makeRequestBody(1))
         }
     }

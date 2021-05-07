@@ -69,7 +69,7 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
          */
         keyboardVisibilityUtils = KeyboardVisibilityUtils(window,
             onShowKeyboard = { keyboardHeight ->
-                nsvContainer.run {
+                nsvContainer?.run {
                     smoothScrollTo(scrollX, scrollY + keyboardHeight)
                 }
             }

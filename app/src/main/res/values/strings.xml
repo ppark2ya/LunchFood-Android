@@ -47,4 +47,6 @@
     <string name="filter_update_success">내 점심줄이 변경되었습니다.</string>
     <string name="filter_update_fail">내 점심줄 변경에 실패했습니다.</string>
     <string name="address_setting_title">지역설정</string>
+    <string name="get_address_failure">주소정보를 가져오는데 실패했습니다.</string>
+    <string name="address_direct_input_notify">주소 직접입력 기능을 이용해주세요.</string>
 </resources>
