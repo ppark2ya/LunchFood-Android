@@ -65,10 +65,11 @@ abstract class BaseActivity(private val transitionMode: TransitionMode = Transit
          * @desc 키보드가 올라왔을 떄 자동으로 스크롤 up
          *  1. AndroidManifest.xml -> activity -> android:windowSoftInputMode="adjustResize" 필요
          *  2. activity_~.xml 루트 layout에 android:fitsSystemWindows="true" 속성 필요
+         *  3. 해당 기능을 사용하기 위해선 NestedScrollView 의 id를 nsvContainer 로 지정
          */
         keyboardVisibilityUtils = KeyboardVisibilityUtils(window,
             onShowKeyboard = { keyboardHeight ->
-                svMenuRegist.run {
+                nsvContainer.run {
                     smoothScrollTo(scrollX, scrollY + keyboardHeight)
                 }
             }

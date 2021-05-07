@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -17,10 +18,13 @@ import android.provider.Settings
 import android.text.InputType
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.get
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferNetworkLossHandler
@@ -37,7 +41,6 @@ import com.lunchfood.data.model.history.HistoryResponse
 import com.lunchfood.data.model.history.PlaceInfo
 import com.lunchfood.ui.base.BaseActivity
 import com.lunchfood.utils.Dlog
-import com.lunchfood.utils.KeyboardVisibilityUtils
 import com.lunchfood.utils.PreferenceManager
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.android.synthetic.main.activity_address_setting.*
@@ -67,12 +70,13 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     private var mPermissionGrantedCount = 0
     private var mCurrentPhotoPath: String? = null
     private var mOutputFileUri: Uri? = null
+    private val mReviewImageGroup: ViewGroup by lazy { llReviewImageContainer }
+    private var mCurrentNumberOfImages = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu_regist)
         setCommonHeaderText(getString(R.string.day_menu_regist))
-        Dlog.i("데이메뉴::: $mDayMenu")
         setupDayMenu()
         // android:fitsSystemWindows="true" 넣으니까 위에 statusbar 영역에 패딩이 추가로 먹는듯...
         window.decorView.setPadding(0, 0, 0, 0)
@@ -181,32 +185,37 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
                 }
             }
             PICK_IMAGE_CHOOSER_REQUEST_CODE -> {
+                // https://youngest-programming.tistory.com/54
+                // https://devlog-h.tistory.com/22
                 if(resultCode == RESULT_OK) {
-                    if(data?.data != null) {
-                        // 이미지 1장 처리시
-                        Dlog.i("camera return:: ${data.data}")
-                        data.data?.let {
-                            score1.setImageURI(it)
-                        }
-                    } else if(data?.clipData != null) {
-                        // 이미지 여러 장 선택시 처리
-                        val count = data.clipData!!.itemCount
-                        if(count > 5) {
-                            Toast.makeText(this, "5장 이상 업로드할 수 없습니다.", Toast.LENGTH_SHORT).show()
-                            return
-                        }
-                        for(i in 0 until count) {
-                            val imageUri = data.clipData!!.getItemAt(i).uri
-                        }
-                    } else {
-                        // 카메라 촬영 이미지 처리
-                        mOutputFileUri?.let {
-                            val bitmap = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, it))
-                            } else {
-                                MediaStore.Images.Media.getBitmap(contentResolver, it)
+                    if(mCurrentNumberOfImages == 5) {
+                        Toast.makeText(this, "5장 이상 업로드할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                    when {
+                        data?.data != null -> {
+                            // 이미지 1장 처리시
+                            data.data?.let {
+                                drawReviewImage(it)
                             }
-                            score1.setImageBitmap(bitmap)
+                        }
+                        data?.clipData != null -> {
+                            // 이미지 여러 장 선택시 처리
+                            val count = data.clipData!!.itemCount
+                            if(mCurrentNumberOfImages + count > 5) {
+                                Toast.makeText(this, "5장 이상 업로드할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                return
+                            }
+                            for(i in 0 until count) {
+                                val imageUri = data.clipData!!.getItemAt(i).uri
+                                drawReviewImage(imageUri)
+                            }
+                        }
+                        else -> {
+                            // 카메라 촬영 이미지 처리
+                            mOutputFileUri?.let {
+                                drawReviewImage(it)
+                            }
                         }
                     }
                 }
@@ -523,12 +532,29 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     }
 
     private fun createImageFile(): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.KOREA).format(Date())
         val imageFileName = "${timeStamp}_pickImageResult"
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val imageFile: File = File.createTempFile(imageFileName, ".jpeg", storageDir)
         mCurrentPhotoPath = imageFile.absolutePath
 
         return imageFile
+    }
+
+    private fun imageUriToBitmap(imageUri: Uri): Bitmap {
+        return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, imageUri))
+        } else {
+            MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+        }
+    }
+
+    private fun drawReviewImage(imageUri: Uri, width: Int = 200, height: Int = 200) {
+        val bitmap = imageUriToBitmap(imageUri)
+        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
+        val thumbnail = mReviewImageGroup[mCurrentNumberOfImages++] as ViewGroup
+        thumbnail.visibility = View.VISIBLE
+        val currentImage = thumbnail[0] as ImageView
+        currentImage.setImageBitmap(resizedBitmap)
     }
 }
