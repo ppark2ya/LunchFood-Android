@@ -58,6 +58,11 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    // 데이터 바인딩 사용하기 위한 부분
+    buildFeatures {
+        dataBinding = true
+    }
 }
 
 dependencies {
