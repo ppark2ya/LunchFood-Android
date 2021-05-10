@@ -66,6 +66,8 @@ class HomeFragment: BaseFragment() {
 
         mNextIndex = 0
         getBestMenuList(BestMenuRequest(id = userId))
+
+        lunchChoice.visibility = View.GONE
     }
 
     private fun setupEventListener(view: View) {
@@ -79,18 +81,6 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setUserLocation() {
-        /**
-            // 중심점 변경
-            mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633), true);
-            // 줌 레벨 변경
-            mapView.setZoomLevel(7, true);
-            // 중심점 변경 + 줌 레벨 변경
-            mapView.setMapCenterPointAndZoomLevel(MapPoint.mapPointWithGeoCoord(33.41, 126.52), 9, true);
-            // 줌 인
-            mapView.zoomIn(true);
-            // 줌 아웃
-            mapView.zoomOut(true);
-         */
         val userNowLocation = MapPoint.mapPointWithGeoCoord(userLat, userLon)
 
         MapPOIItem().let { userMarker ->
@@ -114,14 +104,20 @@ class HomeFragment: BaseFragment() {
             mMapView.removePOIItem(prevMarker)
         }
 
-        val userNowLocation = MapPoint.mapPointWithGeoCoord(mLat, mLon)
-        mMapView.setMapCenterPoint(userNowLocation, true)
+        if(mDistance.toInt() > 400) {
+            mMapView.setZoomLevel(3, true)
+        } else {
+            mMapView.setZoomLevel(2, true)
+        }
+
+        val centerLocation = MapPoint.mapPointWithGeoCoord((userLat + mLat) / 2, (userLon + mLon) / 2)
+        mMapView.setMapCenterPoint(centerLocation, true)
 
         prevMarker = MapPOIItem()
         prevMarker?.let { marker ->
             marker.itemName = mAddress
             marker.tag = 0
-            marker.mapPoint = userNowLocation
+            marker.mapPoint = MapPoint.mapPointWithGeoCoord(mLat, mLon)
             marker.markerType = MapPOIItem.MarkerType.CustomImage
             marker.customImageBitmap = BitmapFactory.decodeResource(resources, R.drawable.gps_img).let {
                 Bitmap.createScaledBitmap(
