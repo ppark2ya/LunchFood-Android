@@ -3,6 +3,8 @@ package com.lunchfood.data.repository
 import com.lunchfood.data.api.ApiHelper
 import com.lunchfood.data.model.*
 import com.lunchfood.data.model.filter.FilterCommonRequest
+import com.lunchfood.data.model.history.DayMenuDeleteParam
+import com.lunchfood.data.model.history.DayMenuInsertParam
 import com.lunchfood.data.model.history.HistoryParam
 import com.lunchfood.data.model.history.HistoryRequest
 
@@ -18,6 +20,8 @@ class MainRepository(private val apiHelper: ApiHelper) {
     suspend fun getPlaceHistory(data: HistoryParam) = apiHelper.getPlaceHistory(data)
     suspend fun getPlaceAuto(data: CommonParam) = apiHelper.getPlaceAuto(data)
     suspend fun getFoodAuto(data: CommonParam) = apiHelper.getFoodAuto(data)
+    suspend fun insertDayMenu(data: DayMenuInsertParam) = apiHelper.insertDayMenu(data)
+    suspend fun deleteDayMenu(data: DayMenuDeleteParam) = apiHelper.deleteDayMenu(data)
     suspend fun insertSelectedPlace(data: FilterCommonRequest) = apiHelper.insertSelectedPlace(data)
     suspend fun updateFilter(data: FilterCommonRequest) = apiHelper.updateFilter(data)
     suspend fun getSelectedPlace(data: FilterCommonRequest) = apiHelper.getSelectedPlace(data)

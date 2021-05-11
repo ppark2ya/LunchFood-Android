@@ -3,6 +3,8 @@ package com.lunchfood.data.api
 import com.lunchfood.data.api.RetrofitBuilder.koroadService
 import com.lunchfood.data.model.*
 import com.lunchfood.data.model.filter.FilterCommonRequest
+import com.lunchfood.data.model.history.DayMenuDeleteParam
+import com.lunchfood.data.model.history.DayMenuInsertParam
 import com.lunchfood.data.model.history.HistoryParam
 import com.lunchfood.data.model.history.HistoryRequest
 
@@ -19,6 +21,8 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun getPlaceAuto(data: CommonParam) = apiService.getPlaceAuto(data)
     suspend fun getFoodAuto(data: CommonParam) = apiService.getFoodAuto(data)
     suspend fun insertSelectedPlace(data: FilterCommonRequest) = apiService.insertSelectedPlace(data)
+    suspend fun insertDayMenu(data: DayMenuInsertParam) = apiService.insertDayMenu(data)
+    suspend fun deleteDayMenu(data: DayMenuDeleteParam) = apiService.deleteDayMenu(data)
     suspend fun updateFilter(data: FilterCommonRequest) = apiService.updateFilter(data)
     suspend fun getSelectedPlace(data: FilterCommonRequest) = apiService.getSelectedPlace(data)
     suspend fun deleteSelectedPlace(data: FilterCommonRequest) = apiService.deleteSelectedPlace(data)

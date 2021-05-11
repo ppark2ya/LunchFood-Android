@@ -3,10 +3,7 @@ package com.lunchfood.data.api
 import com.lunchfood.data.model.*
 import com.lunchfood.data.model.filter.FilterCommonRequest
 import com.lunchfood.data.model.filter.SelectedPlace
-import com.lunchfood.data.model.history.HistoryParam
-import com.lunchfood.data.model.history.HistoryRequest
-import com.lunchfood.data.model.history.HistoryResponse
-import com.lunchfood.data.model.history.PlaceInfo
+import com.lunchfood.data.model.history.*
 import retrofit2.http.*
 
 /**
@@ -107,6 +104,20 @@ interface ApiService {
      */
     @POST("/history/food_auto")
     suspend fun getFoodAuto(@Body data: CommonParam): RetrofitResponse<List<String>>
+
+    /**
+     * @param DayMenuInsertParam
+     * @desc 데이메뉴 등록 api
+     */
+    @POST("/history/insert_day_menu")
+    suspend fun insertDayMenu(@Body data: DayMenuInsertParam): RetrofitResponse<Any>
+
+    /**
+     * @param DayMenuDeleteParam
+     * @desc 데이메뉴 삭제 api
+     */
+    @POST("/history/delete_day_menu")
+    suspend fun deleteDayMenu(@Body data: DayMenuDeleteParam): RetrofitResponse<Any>
 
     /**
      * @param id: 계정 식별자

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.lunchfood.data.model.*
 import com.lunchfood.data.model.filter.FilterCommonRequest
+import com.lunchfood.data.model.history.DayMenuDeleteParam
+import com.lunchfood.data.model.history.DayMenuInsertParam
 import com.lunchfood.data.model.history.HistoryParam
 import com.lunchfood.data.model.history.HistoryRequest
 import com.lunchfood.data.repository.MainRepository
@@ -97,6 +99,24 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
         emit(Resource.pending(data = null))
         try {
             emit(Resource.success(data = mainRepository.getFoodAuto(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun insertDayMenu(data: DayMenuInsertParam) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.insertDayMenu(data)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun deleteDayMenu(data: DayMenuDeleteParam) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.deleteDayMenu(data)))
         } catch (exception: Exception) {
             emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
         }

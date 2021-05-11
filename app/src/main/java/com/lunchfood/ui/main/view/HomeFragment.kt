@@ -67,7 +67,7 @@ class HomeFragment: BaseFragment() {
         mNextIndex = 0
         getBestMenuList(BestMenuRequest(id = userId))
 
-        lunchChoice.visibility = View.GONE
+        //lunchChoice.visibility = View.GONE
     }
 
     private fun setupEventListener(view: View) {

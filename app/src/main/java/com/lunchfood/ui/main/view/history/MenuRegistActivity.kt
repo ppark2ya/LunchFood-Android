@@ -39,11 +39,19 @@ import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.google.android.material.snackbar.Snackbar
 import com.lunchfood.BuildConfig.AWS_COGNITO_CREDENTIAL_POOL_ID
 import com.lunchfood.R
+import com.lunchfood.data.model.User
+import com.lunchfood.data.model.history.DayMenuDeleteParam
+import com.lunchfood.data.model.history.DayMenuInsertParam
 import com.lunchfood.data.model.history.HistoryResponse
 import com.lunchfood.data.model.history.PlaceInfo
 import com.lunchfood.ui.base.BaseActivity
+import com.lunchfood.ui.base.GlobalApplication
+import com.lunchfood.ui.main.view.KakaoLoginActivity
+import com.lunchfood.ui.main.view.MainActivity
+import com.lunchfood.utils.CommonUtil
 import com.lunchfood.utils.Dlog
 import com.lunchfood.utils.PreferenceManager
+import com.lunchfood.utils.Status
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.android.synthetic.main.activity_address_setting.*
 import kotlinx.android.synthetic.main.activity_menu_regist.*
@@ -57,6 +65,7 @@ import kotlin.collections.ArrayList
 
 class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickListener, View.OnTouchListener {
 
+    private val mainViewModel by lazy { GlobalApplication.getViewModel() }
     private val mDayMenu by lazy { intent.getSerializableExtra("dayMenu") as HistoryResponse? }
     private var mScore = 0
     private var mPlaceInfo: PlaceInfo? = null
@@ -74,6 +83,7 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     private var mOutputFileUri: Uri? = null
     private val mReviewImageGroup: ViewGroup by lazy { llReviewImageContainer }
     private var mCurrentNumberOfImages = 0
+    private var mImageMutableMap = mutableMapOf<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +104,7 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
         ibClose3.setOnClickListener(this)
         ibClose4.setOnClickListener(this)
         ibClose5.setOnClickListener(this)
+        lunchChoice.setOnClickListener(this)
         // 참고 : https://gist.github.com/Reacoder/0b316726564f85523251
         // EditText의 경우 이벤트리스너가 OnTouch -> OnFocusChange -> OnClick 순으로 실행되어 click의 경우 바로 안먹음
         etImageUpload.setOnTouchListener(this)
@@ -216,6 +227,9 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
                             for(i in 0 until count) {
                                 val imageUri = data.clipData!!.getItemAt(i).uri
                                 drawReviewImage(imageUri)
+                                CommonUtil.getPathFromUri(this, imageUri)?.let {
+                                    mImageMutableMap["$mCurrentNumberOfImages"] = it
+                                }
                             }
                         }
                         else -> {
@@ -339,6 +353,11 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             R.id.ibClose1, R.id.ibClose2, R.id.ibClose3, R.id.ibClose4, R.id.ibClose5 -> {
                 (v.parent as RelativeLayout).visibility = View.GONE
             }
+            R.id.lunchChoice -> {
+//                insertDayMenu(
+//                    DayMenuInsertParam()
+//                )
+            }
         }
     }
 
@@ -368,7 +387,7 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             R.id.etHistoryMenuName -> {
                 if(MotionEvent.ACTION_UP == event?.action) {
                     val intent = Intent(this@MenuRegistActivity, MenuSearchActivity::class.java)
-                    startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), PLACE_SEARCH_REQUEST_CODE)
+                    startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), MENU_SEARCH_REQUEST_CODE)
                 }
             }
         }
@@ -566,5 +585,52 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
         thumbnail.visibility = View.VISIBLE
         val currentImage = thumbnail[0] as ImageView
         currentImage.setImageBitmap(resizedBitmap)
+    }
+
+    private fun insertDayMenu(data: DayMenuInsertParam) {
+        mainViewModel?.let { model ->
+            model.insertDayMenu(data).observe(this, {
+                it?.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {}
+                        Status.SUCCESS -> {
+                            loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    Toast.makeText(this, getString(R.string.daymenu_insert_success), Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
+                            }
+                        }
+                        Status.FAILURE -> {
+                            loadingEnd()
+                            Dlog.e("insertDayMenu FAILURE : ${it.message}")
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun deleteDayMenu(data: DayMenuDeleteParam) {
+        mainViewModel?.let { model ->
+            model.deleteDayMenu(data).observe(this, {
+                it?.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {}
+                        Status.SUCCESS -> {
+                            loadingEnd()
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {}
+                            }
+                        }
+                        Status.FAILURE -> {
+                            loadingEnd()
+                            Dlog.e("deleteDayMenu FAILURE : ${it.message}")
+                        }
+                    }
+                }
+            })
+        }
     }
 }
