@@ -92,6 +92,14 @@ interface ApiService {
     suspend fun getPlaceHistory(@Body data: HistoryParam): RetrofitResponse<List<HistoryResponse>>
 
     /**
+     * @param id: 사용자 ID
+     * @param interval_date
+     * @desc 최근 선택한 음식점 히스토리 반환
+     */
+    @GET("/history/check_today")
+    suspend fun checkToday(@Query("id") id: Long): RetrofitResponse<List<BestMenu>>
+
+    /**
      * @param q: 사용자 입력 문자열
      * @desc 음식점 자동완성 api
      */

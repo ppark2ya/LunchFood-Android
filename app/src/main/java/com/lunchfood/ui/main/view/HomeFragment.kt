@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.lunchfood.R
 import com.lunchfood.data.model.BestMenu
 import com.lunchfood.data.model.BestMenuRequest
@@ -31,10 +32,11 @@ class HomeFragment: BaseFragment() {
     private var mDistance: String = ""       // 가게까지 거리
     private var mRestaurant: String = ""     // 가게명
     private var mRestaurantUrl: String = ""  // 가게 url
+    private var mGoodBad: Int = 0            // 선택여부
     private var userLon: Double = 0.0
     private var userLat: Double = 0.0
     private lateinit var roadAddr: String   // 사용자 설정 주소
-    private lateinit var bestMenuList: List<BestMenu>
+    private lateinit var bestMenuList: ArrayList<BestMenu>
     private lateinit var mCurrentItem: BestMenu
     private var mSize = 0   // 추천 식당 전체 개수
     private var mNextIndex = 0
@@ -62,15 +64,14 @@ class HomeFragment: BaseFragment() {
         rlMainMapView.addView(mMapView)
 
         setUserLocation()
-        setupEventListener(view)
+        setupEventListener()
 
+        bestMenuList = arrayListOf()
         mNextIndex = 0
-        getBestMenuList(BestMenuRequest(id = userId))
-
-        //lunchChoice.visibility = View.GONE
+        checkToday(id = userId)
     }
 
-    private fun setupEventListener(view: View) {
+    private fun setupEventListener() {
         nextPlace.setOnClickListener {
             insertHistory(makeRequestBody(0))
         }
@@ -147,7 +148,7 @@ class HomeFragment: BaseFragment() {
                             mainActivity.loadingEnd()
                             resource.data?.let { res ->
                                 if(res.resultCode == 200) {
-                                    bestMenuList = res.data!!
+                                    bestMenuList.addAll(res.data!!)
                                     mSize = bestMenuList.size
                                     Dlog.i("메뉴목록 데이터::: $bestMenuList")
                                     showRestaurant()
@@ -157,6 +158,32 @@ class HomeFragment: BaseFragment() {
                         Status.FAILURE -> {
                             mainActivity.loadingEnd()
                             Dlog.e("getBestMenuList FAILURE : ${it.message}")
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun checkToday(id: Long) {
+        mainViewModel?.let { model ->
+            model.checkToday(id).observe(viewLifecycleOwner, {
+                it.let { resource ->
+                    when(resource.status) {
+                        Status.PENDING -> {
+                            Dlog.i("checkToday START")
+                        }
+                        Status.SUCCESS -> {
+                            resource.data?.let { res ->
+                                if(res.resultCode == 200) {
+                                    bestMenuList.addAll(res.data!!)
+                                    lunchChoice.visibility = View.GONE
+                                }
+                                getBestMenuList(BestMenuRequest(id = userId))
+                            }
+                        }
+                        Status.FAILURE -> {
+                            Dlog.e("checkToday FAILURE : ${it.message}")
                         }
                     }
                 }
@@ -177,12 +204,13 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun makeRequestBody(goodBad: Int): HistoryRequest {
+        mGoodBad = goodBad
         return HistoryRequest(
             id = userId,
             placeId = mCurrentItem.placeId,
             placeName = mCurrentItem.placeName,
             categoryName = mCurrentItem.categoryName,
-            goodBad = goodBad,
+            goodBad = mGoodBad,
             lon = mCurrentItem.lon.toString(),
             lat = mCurrentItem.lat.toString()
         )
@@ -201,8 +229,13 @@ class HomeFragment: BaseFragment() {
                             resource.data?.let { res ->
                                 if(res.resultCode == 200) {
                                     if(mSize > mNextIndex) {
-                                        // TODO: 선택했을 때 시나리오 필요할 듯
-                                        showRestaurant()
+                                        if(mGoodBad == 0) {
+                                            lunchChoice.visibility = View.VISIBLE
+                                            showRestaurant()
+                                        } else {
+                                            lunchChoice.visibility = View.GONE
+                                            Toast.makeText(mainActivity, "오늘의 점심줄이 선택되었습니다!!\n변경을 원하시면 다른 추천 버튼을 눌러주세요.", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 }
                             }

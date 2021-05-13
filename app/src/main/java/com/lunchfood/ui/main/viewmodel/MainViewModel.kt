@@ -86,6 +86,15 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
         }
     }
 
+    fun checkToday(id: Long) = liveData(Dispatchers.IO) {
+        emit(Resource.pending(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.checkToday(id)))
+        } catch (exception: Exception) {
+            emit(Resource.failure(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
     fun getPlaceAuto(data: CommonParam) = liveData(Dispatchers.IO) {
         emit(Resource.pending(data = null))
         try {

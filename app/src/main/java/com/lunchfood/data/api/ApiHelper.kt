@@ -18,6 +18,7 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun getBestMenuList(data: BestMenuRequest) = apiService.getBestMenuList(data)
     suspend fun insertHistory(data: HistoryRequest) = apiService.insertHistory(data)
     suspend fun getPlaceHistory(data: HistoryParam) = apiService.getPlaceHistory(data)
+    suspend fun checkToday(id: Long) = apiService.checkToday(id)
     suspend fun getPlaceAuto(data: CommonParam) = apiService.getPlaceAuto(data)
     suspend fun getFoodAuto(data: CommonParam) = apiService.getFoodAuto(data)
     suspend fun insertSelectedPlace(data: FilterCommonRequest) = apiService.insertSelectedPlace(data)
