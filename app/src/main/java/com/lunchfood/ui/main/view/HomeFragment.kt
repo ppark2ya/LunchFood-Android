@@ -37,7 +37,7 @@ class HomeFragment: BaseFragment() {
     private var userLat: Double = 0.0
     private lateinit var roadAddr: String   // 사용자 설정 주소
     private lateinit var bestMenuList: ArrayList<BestMenu>
-    private lateinit var mCurrentItem: BestMenu
+    private var mCurrentItem: BestMenu? = null
     private var mSize = 0   // 추천 식당 전체 개수
     private var mNextIndex = 0
     private var prevMarker: MapPOIItem? = null
@@ -73,11 +73,15 @@ class HomeFragment: BaseFragment() {
 
     private fun setupEventListener() {
         nextPlace.setOnClickListener {
-            insertHistory(makeRequestBody(0))
+            if(mCurrentItem != null) {
+                insertHistory(makeRequestBody(0))
+            }
         }
 
         lunchChoice.setOnClickListener {
-            insertHistory(makeRequestBody(1))
+            if(mCurrentItem != null) {
+                insertHistory(makeRequestBody(1))
+            }
         }
     }
 
@@ -205,15 +209,20 @@ class HomeFragment: BaseFragment() {
 
     private fun makeRequestBody(goodBad: Int): HistoryRequest {
         mGoodBad = goodBad
-        return HistoryRequest(
-            id = userId,
-            placeId = mCurrentItem.placeId,
-            placeName = mCurrentItem.placeName,
-            categoryName = mCurrentItem.categoryName,
-            goodBad = mGoodBad,
-            lon = mCurrentItem.lon.toString(),
-            lat = mCurrentItem.lat.toString()
-        )
+
+        var request: HistoryRequest? = null;
+        mCurrentItem?.let {
+            request = HistoryRequest(
+                id = userId,
+                placeId = it.placeId,
+                placeName = it.placeName,
+                categoryName = it.categoryName,
+                goodBad = mGoodBad,
+                lon = it.lon.toString(),
+                lat = it.lat.toString()
+            )
+        }
+        return request!!
     }
 
     private fun insertHistory(data: HistoryRequest) {
