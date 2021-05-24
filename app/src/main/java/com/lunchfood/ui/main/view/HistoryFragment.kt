@@ -103,11 +103,11 @@ class HistoryFragment: BaseFragment() {
                 it.insertedDate == selectedDate
             }
 
-            val intent = Intent(mainActivity, MenuRegistActivity::class.java)
             if(!dayMenu.isNullOrEmpty()) {
+                val intent = Intent(mainActivity, MenuRegistActivity::class.java)
                 intent.putExtra("dayMenu", dayMenu[0])
+                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
-            startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
 
         // 달력 넘어갈 때 이벤트

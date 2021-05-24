@@ -11,13 +11,13 @@ def lunchProperties = new Properties()
 lunchProperties.load(new FileInputStream(lunchPropertiesFile))
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.lunchfood"
         minSdkVersion 24
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 

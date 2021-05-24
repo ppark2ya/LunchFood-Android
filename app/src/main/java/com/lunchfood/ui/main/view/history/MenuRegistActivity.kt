@@ -66,7 +66,7 @@ import kotlin.collections.ArrayList
 class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickListener, View.OnTouchListener {
 
     private val mainViewModel by lazy { GlobalApplication.getViewModel() }
-    private val mDayMenu by lazy { intent.getSerializableExtra("dayMenu") as HistoryResponse? }
+    private val mDayMenu by lazy { intent.getSerializableExtra("dayMenu") as HistoryResponse }
     private var mScore = 0
     private var mPlaceInfo: PlaceInfo? = null
     private var mFoodName: String? = ""
@@ -104,7 +104,8 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
         ibClose3.setOnClickListener(this)
         ibClose4.setOnClickListener(this)
         ibClose5.setOnClickListener(this)
-        lunchChoice.setOnClickListener(this)
+        cvRegistBtn.setOnClickListener(this)
+        cvDeleteBtn.setOnClickListener(this)
         // 참고 : https://gist.github.com/Reacoder/0b316726564f85523251
         // EditText의 경우 이벤트리스너가 OnTouch -> OnFocusChange -> OnClick 순으로 실행되어 click의 경우 바로 안먹음
         etImageUpload.setOnTouchListener(this)
@@ -245,7 +246,7 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     }
 
     private fun setupDayMenu() {
-        mDayMenu?.let { dayMenu ->
+        mDayMenu.let { dayMenu ->
             val convertDate = CalendarDay.from(LocalDate.parse(dayMenu.insertedDate))
             tvCurrentDate.text = getString(R.string.dayMenuDate, convertDate.year, convertDate.month, convertDate.day)
             etImageUpload.inputType = InputType.TYPE_NULL
@@ -353,10 +354,26 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             R.id.ibClose1, R.id.ibClose2, R.id.ibClose3, R.id.ibClose4, R.id.ibClose5 -> {
                 (v.parent as RelativeLayout).visibility = View.GONE
             }
-            R.id.lunchChoice -> {
-//                insertDayMenu(
-//                    DayMenuInsertParam()
-//                )
+            R.id.cvRegistBtn -> {
+                insertDayMenu(
+                    DayMenuInsertParam(
+                        id = userId,
+                        placeId = mDayMenu.placeId,
+                        placeName = mDayMenu.placeName,
+                        menuName = mFoodName,
+                        category = mPlaceInfo?.placeName,
+                        score = mScore,
+                        menuText = etHistoryLunchMemo.text.toString()
+                    )
+                )
+            }
+            R.id.cvDeleteBtn -> {
+                deleteDayMenu(
+                    DayMenuDeleteParam(
+                        id = userId,
+                        date = mDayMenu.insertedDate
+                    )
+                )
             }
         }
     }
@@ -592,7 +609,9 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             model.insertDayMenu(data).observe(this, {
                 it?.let { resource ->
                     when(resource.status) {
-                        Status.PENDING -> {}
+                        Status.PENDING -> {
+                            loadingStart()
+                        }
                         Status.SUCCESS -> {
                             loadingEnd()
                             resource.data?.let { res ->
@@ -617,11 +636,16 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
             model.deleteDayMenu(data).observe(this, {
                 it?.let { resource ->
                     when(resource.status) {
-                        Status.PENDING -> {}
+                        Status.PENDING -> {
+                            loadingStart()
+                        }
                         Status.SUCCESS -> {
                             loadingEnd()
                             resource.data?.let { res ->
-                                if(res.resultCode == 200) {}
+                                if(res.resultCode == 200) {
+                                    Toast.makeText(this, "데이메뉴 삭제에 성공했습니다!", Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
                             }
                         }
                         Status.FAILURE -> {

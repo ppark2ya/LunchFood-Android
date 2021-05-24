@@ -42,12 +42,12 @@
                 android:background="@drawable/et_rounded_corner_rect_bgwhite"
                 android:drawableEnd="@drawable/ic_image_bf_upload"
                 android:paddingVertical="12dp"
-                android:paddingHorizontal="10dp" />
+                android:paddingHorizontal="10dp"
+                android:visibility="gone"/>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp">
                 <LinearLayout
                     android:id="@+id/llReviewImageContainer"
@@ -292,7 +292,7 @@
                 android:layout_marginTop="20dp"
                 android:orientation="horizontal">
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/nextPlace"
+                    android:id="@+id/cvDeleteBtn"
                     android:layout_width="0dp"
                     android:layout_weight=".5"
                     android:layout_height="50dp"
@@ -309,11 +309,11 @@
                             android:gravity="center"
                             android:textColor="@color/lunch_red"
                             android:textSize="15sp"
-                            android:text="@string/cancel" />
+                            android:text="@string/delete" />
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/lunchChoice"
+                    android:id="@+id/cvRegistBtn"
                     android:layout_width="0dp"
                     android:layout_weight=".5"
                     android:layout_height="50dp"
