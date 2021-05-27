@@ -1,1 +1,2 @@
+alias: lunch_key
 pwd: #info@lunch20210524
