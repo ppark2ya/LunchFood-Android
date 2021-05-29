@@ -6,10 +6,6 @@ import com.lunchfood.data.model.filter.SelectedPlace
 import com.lunchfood.data.model.history.*
 import retrofit2.http.*
 
-/**
- * @docs http://13.209.115.50:3500/docs
-         http://13.209.115.50:3500/redoc
- */
 interface ApiService {
     /**
      * @param id: 사용자 ID

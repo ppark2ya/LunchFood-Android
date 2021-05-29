@@ -258,7 +258,52 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
                 it.setText(dayMenu.menuName)
                 it.inputType = InputType.TYPE_NULL
             }
+            drawScoreImages(dayMenu.score)
+            etHistoryLunchMemo.run {
+                this.setText(dayMenu.menuDiary)
+            }
         }
+    }
+
+    private fun drawScoreImages(score: Int?) {
+        when(score) {
+            1 -> {
+                score1.setImageResource(R.drawable.score_like)
+                score2.setImageResource(R.drawable.score_unlike)
+                score3.setImageResource(R.drawable.score_unlike)
+                score4.setImageResource(R.drawable.score_unlike)
+                score5.setImageResource(R.drawable.score_unlike)
+            }
+            2 -> {
+                score1.setImageResource(R.drawable.score_like)
+                score2.setImageResource(R.drawable.score_like)
+                score3.setImageResource(R.drawable.score_unlike)
+                score4.setImageResource(R.drawable.score_unlike)
+                score5.setImageResource(R.drawable.score_unlike)
+            }
+            3 -> {
+                score1.setImageResource(R.drawable.score_like)
+                score2.setImageResource(R.drawable.score_like)
+                score3.setImageResource(R.drawable.score_like)
+                score4.setImageResource(R.drawable.score_unlike)
+                score5.setImageResource(R.drawable.score_unlike)
+            }
+            4 -> {
+                score1.setImageResource(R.drawable.score_like)
+                score2.setImageResource(R.drawable.score_like)
+                score3.setImageResource(R.drawable.score_like)
+                score4.setImageResource(R.drawable.score_like)
+                score5.setImageResource(R.drawable.score_unlike)
+            }
+            5 -> {
+                score1.setImageResource(R.drawable.score_like)
+                score2.setImageResource(R.drawable.score_like)
+                score3.setImageResource(R.drawable.score_like)
+                score4.setImageResource(R.drawable.score_like)
+                score5.setImageResource(R.drawable.score_like)
+            }
+        }
+        mScore = score?: 0
     }
 
     private fun uploadImagesWithAwsS3(fileName: String, file: File) {
@@ -303,46 +348,11 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
     override fun onClick(v: View?) {
         when(v?.id) {
             R.id.headerBackBtn -> onBackPressed()
-            R.id.score1 -> {
-                score1.setImageResource(R.drawable.score_like)
-                score2.setImageResource(R.drawable.score_unlike)
-                score3.setImageResource(R.drawable.score_unlike)
-                score4.setImageResource(R.drawable.score_unlike)
-                score5.setImageResource(R.drawable.score_unlike)
-                mScore = 1
-            }
-            R.id.score2 -> {
-                score1.setImageResource(R.drawable.score_like)
-                score2.setImageResource(R.drawable.score_like)
-                score3.setImageResource(R.drawable.score_unlike)
-                score4.setImageResource(R.drawable.score_unlike)
-                score5.setImageResource(R.drawable.score_unlike)
-                mScore = 2
-            }
-            R.id.score3 -> {
-                score1.setImageResource(R.drawable.score_like)
-                score2.setImageResource(R.drawable.score_like)
-                score3.setImageResource(R.drawable.score_like)
-                score4.setImageResource(R.drawable.score_unlike)
-                score5.setImageResource(R.drawable.score_unlike)
-                mScore = 3
-            }
-            R.id.score4 -> {
-                score1.setImageResource(R.drawable.score_like)
-                score2.setImageResource(R.drawable.score_like)
-                score3.setImageResource(R.drawable.score_like)
-                score4.setImageResource(R.drawable.score_like)
-                score5.setImageResource(R.drawable.score_unlike)
-                mScore = 4
-            }
-            R.id.score5 -> {
-                score1.setImageResource(R.drawable.score_like)
-                score2.setImageResource(R.drawable.score_like)
-                score3.setImageResource(R.drawable.score_like)
-                score4.setImageResource(R.drawable.score_like)
-                score5.setImageResource(R.drawable.score_like)
-                mScore = 5
-            }
+            R.id.score1 -> drawScoreImages(1)
+            R.id.score2 -> drawScoreImages(2)
+            R.id.score3 -> drawScoreImages(3)
+            R.id.score4 -> drawScoreImages(4)
+            R.id.score5 -> drawScoreImages(5)
             R.id.ivHistoryPlaceSearch -> {
                 val intent = Intent(this@MenuRegistActivity, PlaceSearchActivity::class.java)
                 startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP), PLACE_SEARCH_REQUEST_CODE)
@@ -361,9 +371,10 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
                         placeId = mDayMenu.placeId,
                         placeName = mDayMenu.placeName,
                         menuName = mFoodName,
-                        category = mPlaceInfo?.placeName,
+                        category = if(mPlaceInfo != null) mPlaceInfo?.placeName else "",
                         score = mScore,
-                        menuText = etHistoryLunchMemo.text.toString()
+                        menuText = etHistoryLunchMemo.text.toString(),
+                        insertedDate = mDayMenu.insertedDate
                     )
                 )
             }
@@ -618,6 +629,8 @@ class MenuRegistActivity : BaseActivity(TransitionMode.HORIZON), View.OnClickLis
                                 if(res.resultCode == 200) {
                                     Toast.makeText(this, getString(R.string.daymenu_insert_success), Toast.LENGTH_SHORT).show()
                                     finish()
+                                } else {
+                                    Toast.makeText(this, "데이메뉴 저장에 실패했습니다.\n 입력값을 확인해주세요", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
