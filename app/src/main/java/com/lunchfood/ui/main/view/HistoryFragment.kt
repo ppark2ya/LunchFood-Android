@@ -43,7 +43,11 @@ class HistoryFragment: BaseFragment() {
             view.findViewById<ImageView>(R.id.headerBackBtn).visibility = View.GONE
             setCommonHeaderText(getString(R.string.menu_history), view)
         }
+        setupCalendarEventListener()
+    }
 
+    override fun onResume() {
+        super.onResume()
         val now = CalendarDay.today()
         materialCalendarView.selectedDate = now
         getPlaceHistory(
@@ -54,7 +58,6 @@ class HistoryFragment: BaseFragment() {
                 intervalDate = 0
             )
         )
-        setupCalendarEventListener()
     }
 
     private fun setupCalendarView() {

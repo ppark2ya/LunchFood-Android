@@ -237,10 +237,14 @@ class HomeFragment: BaseFragment() {
                             mainActivity.loadingEnd()
                             resource.data?.let { res ->
                                 if(res.resultCode == 200) {
-                                    if(mSize > mNextIndex) {
+                                    if(mSize >= mNextIndex) {
                                         if(mGoodBad == 0) {
                                             lunchChoice.visibility = View.VISIBLE
-                                            showRestaurant()
+                                            if(mSize != mNextIndex) {
+                                                showRestaurant()
+                                            } else {
+                                                Toast.makeText(mainActivity, "마지막 추천 식당입니다.", Toast.LENGTH_SHORT).show()
+                                            }
                                         } else {
                                             lunchChoice.visibility = View.GONE
                                             Toast.makeText(mainActivity, "오늘의 점심줄이 선택되었습니다!!\n변경을 원하시면 다른 추천 버튼을 눌러주세요.", Toast.LENGTH_SHORT).show()

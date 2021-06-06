@@ -34,6 +34,7 @@ class BridgeActivity: BaseActivity(TransitionMode.HORIZON) {
                     when(resource.status) {
                         Status.PENDING -> {}
                         Status.SUCCESS -> {
+                            loadingEnd()
                             resource.data?.let { res ->
                                 if(res.resultCode == 200) {
                                     GlobalApplication.mUserData = res.data!!
@@ -56,10 +57,5 @@ class BridgeActivity: BaseActivity(TransitionMode.HORIZON) {
                 }
             })
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        loadingEnd()
     }
 }
